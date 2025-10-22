@@ -136,37 +136,6 @@ def getRolViewGet(request):
         cur.close()
         return Response(listData)
     
-# @api_view(['GET','POST'])
-# def registrarViewPost(request, id=None):
-#     if request.method == 'POST':
-#         try:
-#             # Obtener los datos de la solicitud
-#             transaccion = request.data.get('Transaccion', '')
-#             json_data = json.dumps(request.data)
-#             # Definir las acciones a realizar según la transacción
-#             if transaccion == 'registrar':
-#                 # Llamar al procedimiento almacenado para registrar el usuario
-#                 cur = connection.cursor()
-#                 cur.callproc(nameSP.registrarUsuario, [json_data, transaccion])
-#                 cur.close()
-#                 return Response({"mensaje":"Usuario registrado correctamente"},status=201)
-#             elif transaccion == 'editar_usuario' and id is not None:
-#                 # Llamar el procedimiento almacenado para editar el usuario
-#                 cur = connection.cursor()
-#                 cur.callproc(nameSP.registrarUsuario, [json_data, transaccion])
-#                 cur.close()
-#                 return Response({"mensaje":"Usuario actualizado correctamente"},status=200)
-#             elif transaccion == 'eliminar_usuario' and id is not None:
-#                 # Llamar el procedimiento almacenado para eliminar el usuario
-#                 cur = connection.cursor()
-#                 cur.callproc(nameSP.registrarUsuario, [json_data, transaccion])
-#                 cur.close()
-#                 return Response({"mensaje":"Usuario eliminado correctamente"},status=200)
-#             else:
-#                 return Response({"mensaje":"Transacción no válida"},status=400)
-
-#         except Exception as e:
-#             return Response({"mensaje":str(e)},status=400)
 @api_view(['GET','POST'])
 def registrarViewPost(request, id=None):
     if request.method == 'POST':
@@ -720,57 +689,6 @@ def agregarStockProductoViewPost(request, id=None):
             return Response({"mensaje": str(e)}, status=400)
         
 @api_view(['GET','POST'])
-# def getIvaViewGet(request):
-#     if request.method == 'GET':
-#         #Obtener los parámetros de la URL
-#         id_iva = request.GET.get('IdIva', None)  # Ahora directamente un número
-#         transaccion = request.get('Transaccion',None)
-
-#         if not id_iva or not transaccion:
-#             return Response({"error": "Faltan parámetros en la solicitud."}, status=400)
-        
-#         # Verificación de que el valor de Transaccion sea válido
-#         if transaccion != 'consulta_iva':
-#             return Response({"error": f"Transacción no válida: {transaccion}"}, status=400)
-
-#         # Verificación de que el valor de IdProducto sea un número entero
-#         try:
-#             id_producto = int(id_producto)
-#         except ValueError:
-#             return Response({"error": "El valor de 'IdIva' debe ser un número entero."}, status=400)
-
-#         # Llamada al procedimiento almacenado
-#         try:
-#             cur = connection.cursor()
-#             # print("Ejecutando el procedimiento almacenado con IdProducto:", id_producto, "y Transaccion:", transaccion)
-
-#             # Llamamos al procedimiento pasando el número directamente
-#             cur.callproc('GetIva', [id_iva, transaccion])
-
-#             # Recuperamos todos los resultados de la consulta
-#             results = cur.fetchall()
-
-#             listData = []
-#             for row in results:
-#                 data = {
-#                     "IdIva": row[0],
-#                     "DescripcionIva": row[1],
-#                     "PorcentajeIva": row[2]
-#                 }
-#                 json_data = json.dumps(data)
-#                 jd = json.loads(json_data)
-#                 listData.append(jd)
-            
-#             cur.close()
-
-#             if listData:
-#                 return Response(listData)
-#             else:
-#                 return Response({"message": "No se encontró IVA."}, status=200)
-
-#         except Exception as e:
-#             print("Error al ejecutar el procedimiento almacenado:", e)
-#             return Response({"error": "Error al ejecutar el procedimiento."}, status=500)
 def getIvaViewGet(request,IdIva=None):
     if request.method == 'GET':
         cur = connection.cursor()
@@ -975,38 +893,7 @@ def getDetallePedidoViewGet(request):
             return Response({"message": "No se encontró detalle de pedido para el IdPedido proporcionado."}, status=200)
     except Exception as e:
         return Response({"error": "Error al ejecutar el procedimiento."},e, status=500)
-    
-# @api_view(['POST'])
-# def agregarFacturaViewPost(request, id=None):
-#     try:
-#         #Obtener los datos de la transaccion
-#         transaccion = request.data.get('Transaccion','')
-#         json_data = json.dumps(request.data)
-        
-#         cur = connection.cursor()
-        
-#         if transaccion == 'generar_factura':
-#             # Llamar al SP que crear la factura
-#             cur.callproc(nameSP.agregarFactura,[json_data,transaccion])
-            
-#             # Obtener resultados si el SP devuelve algo
-#             results = cur.fetchall()
-#             cur.close()
-            
-#             if results:
-#                 # El SP devuelve: (IdFactura,CodigoFactura)
-#                 return Response({
-#                     "mensaje": "Factura creada correctamente",
-#                     "IdFactura": results[0][0],
-#                     "CodigoFactura": results[0][1] 
-#                 },status=200)
-#         else:
-#             return Response({"mensaje":"Transaccion no válida"},status=400)
-#     except Exception as e:
-#         return Response({"mensaje": str(e)},status=400)
 
-# @api_view(['POST'])
-# def agregarFacturaViewPost(request, id=None):
     try:
         transaccion = request.data.get('Transaccion','')
         json_data = json.dumps(request.data)
@@ -1057,7 +944,6 @@ def getDetallePedidoViewGet(request):
     except Exception as e:
         print(f"❌ ERROR en agregarFacturaViewPost: {str(e)}")
         return Response({"mensaje": str(e)}, status=400)
-
 @api_view(['POST'])
 def agregarFacturaViewPost(request, id=None):
     try:
