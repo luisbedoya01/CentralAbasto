@@ -864,16 +864,6 @@ export class PedidosComponent implements OnInit {
             confirmButtonText: 'Aceptar',
             confirmButtonColor: '#d33'
           });
-          // console.error('❌ Stock insuficiente:', {
-          //   disponible: stockRealmenteDisponible,
-          //   requerido: cantidadRequerida,
-          //   unidad: unidadStock
-          // });
-
-          // this.snackBar.open(`❌ Stock insuficiente. Disponible: ${stockRealmenteDisponible} ${unidadStock}`, 'Cerrar', {
-          //   duration: 3000,
-          //   panelClass: ['error-snackbar']
-          // });
           return;
         }
       }
@@ -1191,88 +1181,6 @@ export class PedidosComponent implements OnInit {
   calcularTotal(): number {
     return this.productosSeleccionados.reduce((total, item) => total + item.total, 0);
   }
-
-  // async confirmarPedido() {
-  //   if (!this.nombreCliente || this.nombreCliente.trim() === '') {
-  //     alert('Por favor ingrese el nombre del cliente');
-  //     return;
-  //   }
-  //   const result = await Swal.fire({
-  //   title: 'Confirmar Pedido',
-  //   html: `
-  //           <div class="text-start">
-  //               <p>¿Está seguro de confirmar la creación de este pedido?</p>
-  //           </div>
-  //       `,
-  //   icon: 'warning',
-  //   showCancelButton: true,
-  //   confirmButtonColor: 'rgba(38, 218, 77, 1)',
-  //   confirmButtonText: 'Si, crear pedido',
-  //   cancelButtonText: 'No, cancelar',
-  //   allowOutsideClick: false,
-  //   showLoaderOnConfirm: true,
-  //   showClass: { popup: 'animate_animated animatefadeIn animate_faster' },
-  //   preConfirm: () => {
-  //     return this.crearPedido();
-  //   }
-  // });
-
-  //   if (result.isConfirmed) {
-  //     Swal.fire({
-  //       title: '¡Pedido Creado!',
-  //       text: 'El pedido ha sido creado correctamente',
-  //       icon: 'success',
-  //       timer: 1000,
-  //       showConfirmButton: false
-  //     });
-  //     this.obtenerPedidos();
-  //   }
-
-
-  //   try {
-  //     const pedido = {
-  //       Transaccion: 'agregar_pedido',
-  //       IdCliente: this.nombreCliente.trim(),
-  //       SubTotal: this.calcularSubTotal(),
-  //       IVA: this.calcularIVA(),
-  //       Total: this.calcularTotal()
-  //     };
-
-  //     const respuesta = await firstValueFrom(
-  //       this.pedidoService.agregarPedido(pedido) as Observable<RespuestaPedido>);
-
-  //     if (respuesta && respuesta.IdPedido && respuesta.CodigoPedido) {
-  //       const idPedido = respuesta.IdPedido;
-  //       const codigoPedido = respuesta.CodigoPedido;
-
-  //       await this.guardarDetallesPedido(idPedido, codigoPedido);
-  //       await this.actualizarStockProductos();
-
-  //       this.cerrarModalAgregarPedido();
-  //       this.obtenerPedidos();
-
-  //       this.snackBar.open(
-  //         `✅ Pedido ${codigoPedido} confirmado exitosamente`,
-  //         'Cerrar',
-  //         {
-  //           duration: 3000,
-  //           horizontalPosition: 'center',
-  //           verticalPosition: 'bottom'
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     const errorMessage = JSON.stringify(error, null, 2);
-  //     console.error('Error al agregar el pedido', errorMessage);
-
-  //     this.snackBar.open('❌ Error al confirmar el pedido', 'Cerrar', {
-  //       duration: 5000,
-  //       horizontalPosition: 'center',
-  //       verticalPosition: 'bottom',
-  //       panelClass: ['error-snackbar']
-  //     });
-  //   }
-  // }
 
   async confirmarPedido() {
     Swal.fire({

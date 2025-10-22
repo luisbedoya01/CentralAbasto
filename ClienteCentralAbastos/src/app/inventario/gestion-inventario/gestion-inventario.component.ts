@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductoService } from '../../servicios/producto.service';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CategoriaService } from '../../servicios/categoria.service';
@@ -312,10 +312,6 @@ export class GestionInventarioComponent implements OnInit {
 
   // #region Metodos GET
 
-  // get precios(): FormArray {
-  //   return this.precioVentaForm.get('precios') as FormArray;
-  // }
-
   filtrarProductos() {
     const texto = this.filtro.trim().toLowerCase();
     this.productosFiltrados = this.productos.filter(p =>
@@ -506,28 +502,6 @@ export class GestionInventarioComponent implements OnInit {
       }
     );
   }
-
-  // obtenerStockProducto() {
-  //   this.stockProductos = [];
-  //   //let idProducto = Number(this.stockProductoForm.value.IdProducto);
-  //   this.stockProductoService.getStockProducto(Number(this.stockProductoForm.value.IdProducto), 'consulta_stock_producto').subscribe(
-  //     (data: any) => {
-  //       if (data) {
-  //         console.log('Datos obtenidos:', data);
-  //       } else if (Array.isArray(data)) {
-  //         this.stockProductos = data;
-  //         console.log('Stock de productos:', this.stockProductos);
-  //       } else {
-  //         console.log('Error: la respuesta del servidor no es un array', data);
-  //       }
-  //     },
-  //     (error) => {
-  //       console.log('Error en la solicitud al servidor. Consulte con el administrador: ' + JSON.stringify(error, null, 2));
-  //       this.stockProductos = [];
-  //     }
-  //    );
-  // }
-
 
   obtenerMedidasConversion() {
     this.medidasConversion.getUnidadMedida('consulta_general').subscribe(

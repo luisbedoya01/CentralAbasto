@@ -21,7 +21,6 @@ export class UnidadMedidaService {
   }
 
   agregarMedidaConversion(medida: any) {
-    //return this.http.post(`${this.baseUrl}medidaconversion/`, medida);
     return this.http.post(this.baseUrl + "medidaconversion/", medida);
   }
 

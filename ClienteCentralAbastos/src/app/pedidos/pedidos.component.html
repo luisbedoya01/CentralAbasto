@@ -62,20 +62,11 @@
                                 (click)="abrirModalEdicion(pedido)" [title]="'Editar Pedido - ' + pedido.CodigoPedido">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <!-- <button class="btn btn-warning btn-sm d-flex align-items-center gap-1"
-                                (click)="abrirModalEdicion(pedido)" [title]="'Editar Pedido - ' + pedido.CodigoPedido">
-                                <mat-icon>edit</mat-icon>
-                            </button> -->
-                            <!-- Botón para cancelar pedido -->
                             <button *ngIf="pedido.IdEstado === 4"
                                 class="btn btn-danger btn-sm d-flex align-items-center gap-1"
                                 (click)="cancelarPedido(pedido)" [title]="'Cancelar Pedido - ' + pedido.CodigoPedido">
                                 <mat-icon>cancel</mat-icon>
                             </button>
-                            <!-- <button class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-                                (click)="cancelarPedido(pedido)" [title]="'Cancelar Pedido - ' + pedido.CodigoPedido">
-                                <mat-icon>cancel</mat-icon>
-                            </button> -->
                         </div>
                     </td>
                 </tr>

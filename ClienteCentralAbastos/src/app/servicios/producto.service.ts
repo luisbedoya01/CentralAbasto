@@ -21,8 +21,6 @@ export class ProductoService {
   }
 
   getProductoId(id: number): Observable<any> {
-    //let params = new HttpParams().set('Id', id)
-    //return this.http.get<any[]>(`${this.baseUrl}productoget/`, { params });
     return this.http.get<any>(`${this.baseUrl}productoget/${id}/`);
   }
 
@@ -37,7 +35,4 @@ export class ProductoService {
   eliminarProducto(id: number,producto: any){
     return this.http.post(this.baseUrl+"producto/"+id+"/", producto);
   }
-  // editarProducto(id: number, producto: any){
-  //   return this.http.post(this.baseUrl+"producto/", producto);
-  // }
 }

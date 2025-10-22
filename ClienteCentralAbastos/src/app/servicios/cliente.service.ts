@@ -15,10 +15,6 @@ export class ClienteService {
     return this.http.post(this.baseUrl + "clientepost/", cliente);
   }
 
-  // editarCliente(codigo: string, tipo: string, cliente: any) {
-  //   return this.http.post(this.baseUrl+ "clientepost/"+ codigo + "/" + tipo + "/",cliente);
-  // }
-
   editarCliente(codigo: string, tipo: string, cliente: any) {
     return this.http.post(
       this.baseUrl + "clientepost/" + codigo + "/" + tipo + "/",

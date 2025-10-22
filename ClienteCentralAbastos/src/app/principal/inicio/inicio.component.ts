@@ -21,11 +21,6 @@ export class InicioComponent {
 
   constructor(private authService: AuthService) { }
 
-  // ngOnInit() {
-  //   this.authService.usuario$.subscribe(data => {
-  //     this.usuario = data;
-  //   });
-  // }
   ngOnInit(): void {
     this.authService.usuario$.subscribe(usuario => {
       if (usuario && usuario.nombres && usuario.apellidos) {

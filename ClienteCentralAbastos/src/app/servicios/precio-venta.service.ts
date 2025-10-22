@@ -11,16 +11,6 @@ export class PrecioVentaService {
 
   constructor(private http: HttpClient) { }
 
-  // getPreciosVenta(transaccion: string): Observable<any> {
-  //   let params = new HttpParams().set('Transaccion', transaccion)
-  //   return this.http.get<any[]>(`${this.baseUrl}precioventaget/`, { params });
-  // }
-
-  // getPrecioVenta(id: number, transaccion: string): Observable<any> {
-  //   let params = new HttpParams().set('IdProducto', id);
-  //   return this.http.get<any>(`${this.baseUrl}precioventaget/${transaccion}/${params}/`);
-  // }
-
   getPrecioVenta(id: number, transaccion: string): Observable<any> {
     let params = new HttpParams()
         .set('IdProducto', id)  

@@ -15,8 +15,6 @@ export class StockProductoService {
     if (!idProducto) {
       return throwError(() => new Error('ID de producto es requerido'));
     }
-
-    // URL correcta sin duplicar "api/v1/"
     const url = `${this.baseUrl}stockproductoget/${idProducto}/`;
     const params = new HttpParams().set('Transaccion', transaccion);
     
@@ -28,7 +26,6 @@ export class StockProductoService {
       console.error('Error: El stock debe tener un IdProducto válido.');
       return throwError('Id requerido');
     }
-    // NO repitas "centralAbasto/api/v1/" - ya está en baseUrl
     const url = `${this.baseUrl}stockproductopost/${stock.IdProducto}/`;
     console.log('URL completa con ID:', url);
     return this.http.post(url, stock);
