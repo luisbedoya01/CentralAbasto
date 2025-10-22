@@ -10,30 +10,6 @@ from .nameSP import nameSP
 from django.db import connection
 from datetime import date, datetime
 from django.contrib.auth.hashers import make_password, check_password
-
-# @api_view(['GET','POST'])
-# def loginViewPost(request):
-#     if request.method == 'POST':        
-        
-#         cur = connection.cursor()
-#         cur.callproc(nameSP.loginUsuario,[request.body, request.data['Transaccion']])
-#         results = cur.fetchall()
-#         listData =[]
-
-#         for row in results:
-#             data = {
-#                 "id": row[0],
-#                 "cedula": row[1],
-#                 "nombres": row[2],
-#                 "apellidos": row[3],
-#                 "idrol": row[5]
-#             }
-#             json_data = json.dumps(data)
-#             jd = json.loads(json_data)
-#             listData.append(jd)
-#         cur.close()
-        
-#         return Response(listData)
     
 @api_view(['GET','POST'])
 def loginViewPost(request):
