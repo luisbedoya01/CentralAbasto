@@ -1,0 +1,99 @@
+/* Fondo de la página con imagen y color pastel */
+/* body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-image: url('https://elceo.com/wp-content/uploads/2024/04/central-de-abasto_.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+} */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100%; */
+  height: 100vh;
+  width: 100%;
+  background-image: url('/assets/fondoPrincipal.jpg'); 
+  background-position: center;
+  background-size: cover;
+}
+
+.login-form {
+  background-color: rgba(255, 255, 255, 0.75); /* Fondo blanco con algo de transparencia */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+  text-align: center;
+  width: 300px;
+}
+
+h2 {
+  color: #4CAF50; /* Verde pastel */
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #888;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-login {
+  background-color: #5F6368; /* Color pastel gris azulado */
+  color: white;
+  margin-bottom: 10px;
+  border-radius: 25px; /* Bordes redondeados */
+}
+
+
+.btn-login:hover {
+  background-color: #434446;
+}
+
+.btn-login:hover {
+  background-color: #4e555b; /* Gris oscuro */
+}
+
+.btn-register {
+  background-color: #ffb3b3; /* Color pastel rosa */
+  color: white;
+}
+
+.btn-register:hover {
+  background-color: #ff8080; /* Rosa más oscuro */
+}
+
+.success-snackbar {
+  background-color: #4caf50 !important; /* Verde */
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important; /* Rojo */
+  color: white !important;
+}
+
+.warning-snackbar {
+  background-color: #ff9800 !important; /* Naranja */
+  color: white !important;
+}

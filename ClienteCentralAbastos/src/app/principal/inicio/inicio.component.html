@@ -1,0 +1,19 @@
+<div class="welcome-page">
+  <div class="welcome-content">
+    <div class="text-section">
+      <h1 class="greeting">Hola de nuevo,</h1>
+      <h2 *ngIf="nombreUsuario" class="user-name">{{ nombreUsuario }}</h2>
+      <p class="subtitle">
+        Tu centro de control está lista. Usa el menú para empezar a gestionar.
+      </p>
+    </div>
+    <div class="image-section">
+      <img src="assets/welcome.png" alt="Ilustación de bienvenida">
+    </div>
+  </div>
+</div>
+
+<!-- <div class="welcome-container">
+  <h1 *ngIf="usuario" class="welcome-title">Bienvenido, {{ usuario.nombres }} {{ usuario.apellidos }}</h1>
+  <h4 class="welcome-subtitle">Al sistema de gestión del centro de abasto</h4>
+</div> -->

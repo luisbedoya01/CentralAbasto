@@ -1,0 +1,22 @@
+# Python / Backend
+# ----------------
+venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+db.sqlite3
+
+# Angular / Frontend
+# ------------------
+ClienteCentralAbastos/node_modules/
+ClienteCentralAbastos/dist/
+ClienteCentralAbastos/build/
+ClienteCentralAbastos/.env
+ClienteCentralAbastos/.env.local
+
+# Archivos del editor y OS
+# --------------------
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,40 @@
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+body,
+html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+}
+
+.sidenav-content {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+.sidenav .nav-list {
+  /* overflow-y: auto;  */
+  min-height: 0;
+}
+
+.logout-button-container {
+  padding: 16px;
+}
+
+.logout-button-container button {
+  width: 100%;
+}
+
+.main-content {
+  padding: 20px;
+}

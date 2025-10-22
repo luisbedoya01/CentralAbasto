@@ -1,0 +1,118 @@
+.welcome-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+  padding: 2rem;
+  /* padding-top: 10vh; */
+  box-sizing: border-box;
+}
+
+/* .welcome-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+} */
+
+.welcome-content {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+.text-section {
+  flex: 1;
+}
+
+.greeting {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #555;
+  margin: 0;
+}
+
+.user-name {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #190133;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #777;
+  margin-top: 1rem;
+  max-width: 400px;
+}
+
+.image-section {
+  flex: 1;
+  text-align: center;
+}
+
+.image-section img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .welcome-content {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .subtitle {
+    max-width: 100%;
+  }
+}
+
+/* .welcome-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.welcome-subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #666;
+  margin-top: 0;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr); 
+    gap: 1px; 
+    justify-items: center; 
+    align-items:center; 
+    height: 90vh; 
+  }
+  
+  .card {
+    width: 350px; 
+    height: 250px; 
+    cursor: pointer; 
+    transition: transform 0.3s ease; 
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  img {
+    height: 80%;
+  } */

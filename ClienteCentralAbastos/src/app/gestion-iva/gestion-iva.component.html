@@ -1,0 +1,74 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-center">Configuración de IVA</h2>
+        <button matButton="filled" id="btnOpen" class="btn btn-primary d-flex align-items-center gap-2"
+            (click)="abrirModalAgregarIVA()">
+            <mat-icon>add</mat-icon>
+            Nuevo IVA
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Descripción</th>
+                    <th>Porcentaje</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let i of iva">
+                    <td>{{i.DescripcionIva}}</td>
+                    <td>{{i.PorcentajeIva}}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-warning btn-sm d-flex align-items-center gap-1" (click)="editarIva(i)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para poder agregar IVA -->
+<div class="modal" *ngIf="isModalVisible">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ modoEdicion ? 'Editar IVA' : 'Agregar IVA' }} </h5>
+            <button class="close-btn" (click)="cerrarModalAgregarIVA()">X</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="ivaForm" (ngSubmit)="guardarIva()">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <b><label for="descrpicionIva" class="form-label">Descripción de IVA:</label></b>
+                        <input type="text" id="descpripcionIva" class="form-control" formControlName="DescripcionIva"
+                            required>
+                    </div>
+                    <div class="col-md-6">
+                        <b><label for="descrpicionIva" class="form-label">Porcentaje de IVA:</label></b>
+                        <input type="number" id="porcentajeIva" class="form-control" formControlName="PorcentajeIva"
+                            required>
+                    </div>
+                </div>
+                <div class="d-flex gap-1">
+                    <button *ngIf="!modoEdicion" type="submit" class="btn btn-primary d-flex align-items-center gap-1"
+                        [disabled]="ivaForm.invalid">
+                        <mat-icon>save</mat-icon>Guardar
+                    </button>
+                    <button *ngIf="modoEdicion" type="submit" class="btn btn-warning d-flex align-items-center gap-1"
+                        [disabled]="ivaForm.invalid">
+                        <mat-icon>edit</mat-icon>Editar
+                    </button>
+                    <button type="button" class="btn btn-danger d-flex align-items-center gap-1"
+                        (click)="cerrarModalAgregarIVA()">
+                        <mat-icon>not_interested</mat-icon> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

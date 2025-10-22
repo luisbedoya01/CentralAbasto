@@ -1,0 +1,61 @@
+/* Estilos existentes */
+/* .sidenav-container {
+    height: 100vh;
+}
+
+.sidenav {
+    width: 250px;
+}
+
+.sidenav-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.nav-list {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.logout-button-container {
+    padding: 16px;
+}
+
+.logout-button-container button {
+    width: 100%;
+}
+
+.main-content {
+    padding: 20px;
+} */
+
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+}
+
+.sidenav-content {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+.sidenav .nav-list {
+  overflow-y: auto;
+}
+
+.logout-button-container {
+  padding: 16px;
+}
+
+.logout-button-container button {
+  width: 100%;
+}
+
+.main-content {
+  padding: 20px;
+}

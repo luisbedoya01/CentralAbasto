@@ -1,0 +1,607 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-center">Gestión de pedidos</h2>
+        <button matButton="filled" id="btnAgregarPedido" class="btn btn-primary d-flex align-items-center gap-2"
+            (click)="abrirModalAgregarPedido()">
+            <mat-icon>add</mat-icon>
+            Nuevo Pedido
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Buscar pedido..." [(ngModel)]="filtro"
+                (ngModelChange)="filtrarPedidos()">
+        </div>
+    </div>
+
+
+    <!-- Tablas con los pedidos -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Código</th>
+                    <th class="text-center">Cliente</th>
+                    <th class="text-center">Subtotal</th>
+                    <th class="text-center">IVA</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Fecha del Pedido</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody *ngFor="let pedido of pedidosPaginados">
+                <tr>
+                    <td>{{pedido.CodigoPedido}}</td>
+                    <td>{{pedido.ClientePedido}}</td>
+                    <td class="text-center">{{pedido.SubtotalPedido | currency}}</td>
+                    <td class="text-center">{{pedido.IvaPedido | currency}}</td>
+                    <td class="text-center">{{pedido.TotalPedido | currency}}</td>
+                    <!-- <td class="text-center">{{pedido.FechaPedido | date:'dd/MM/yyyy HH:mm:ss'}}</td> -->
+                    <td class="text-center">{{pedido.FechaPedido}}</td>
+                    <td>
+                        <span class="badge" [ngClass]="{
+                            'bg-info': pedido.IdEstado === 4,
+                            'bg-secondary': pedido.IdEstado === 6
+                        }">
+                            {{pedido.EstadoPedido}}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <!-- Botón para consultar pedido -->
+                            <button class="btn btn-info btn-sm d-flex align-items-center gap-1"
+                                (click)="verDetallePedido(pedido)"
+                                [title]="'Consultar Pedido - ' + pedido.CodigoPedido">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                            <!-- Botón para editar pedido que esté en estado pendiente -->
+                            <button *ngIf="pedido.IdEstado === 4"
+                                class="btn btn-warning btn-sm d-flex align-items-center gap-1"
+                                (click)="abrirModalEdicion(pedido)" [title]="'Editar Pedido - ' + pedido.CodigoPedido">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <!-- <button class="btn btn-warning btn-sm d-flex align-items-center gap-1"
+                                (click)="abrirModalEdicion(pedido)" [title]="'Editar Pedido - ' + pedido.CodigoPedido">
+                                <mat-icon>edit</mat-icon>
+                            </button> -->
+                            <!-- Botón para cancelar pedido -->
+                            <button *ngIf="pedido.IdEstado === 4"
+                                class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                                (click)="cancelarPedido(pedido)" [title]="'Cancelar Pedido - ' + pedido.CodigoPedido">
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                            <!-- <button class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                                (click)="cancelarPedido(pedido)" [title]="'Cancelar Pedido - ' + pedido.CodigoPedido">
+                                <mat-icon>cancel</mat-icon>
+                            </button> -->
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Paginado de la tabla -->
+<div class="d-flex justify-content-center align-items-center gap-4 mb-3">
+    <!-- Selector de elementos por página -->
+    <div>
+        Mostrar
+        <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()"
+            class="form-select d-inline-block w-auto ms-2">
+            <option *ngFor="let cantidad of opcionesPorPagina" [value]="cantidad">{{ cantidad }}</option>
+        </select>
+        elementos
+    </div>
+    <!-- Paginación -->
+    <nav *ngIf="paginasTotales > 1">
+        <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="paginaActual === 1">
+                <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+            </li>
+
+            <li class="page-item" *ngFor="let pagina of [].constructor(paginasTotales); let i = index"
+                [class.active]="paginaActual === i + 1">
+                <a class="page-link" (click)="cambiarPagina(i + 1)">{{ i + 1 }}</a>
+            </li>
+
+            <li class="page-item" [class.disabled]="paginaActual === paginasTotales">
+                <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Modal para agregar pedido -->
+<div class="modal" *ngIf="isModalVisible">
+    <div class="modal-content modal-xl">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <mat-icon class="me-2">add_shopping_cart</mat-icon>
+                Nuevo Pedido
+            </h5>
+            <button class="close-btn" (click)="cerrarModalAgregarPedido()">X</button>
+        </div>
+        <div class="modal-body">
+
+            <!-- Información del cliente -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <mat-icon class="me-2">person</mat-icon>
+                        Información del Cliente
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Cliente (Identificador):</label>
+                            <input type="text" class="form-control" [(ngModel)]="nombreCliente"
+                                placeholder="Ingrese nombre o identificador del cliente..." required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección para buscar y agregar productos -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <mat-icon class="me-2">search</mat-icon>
+                        Buscar y Agregar Productos
+                    </h6>
+                </div>
+                <div class="card-body">
+
+                    <!-- Buscador de productos -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Buscar Producto:</label>
+                        <input type="text" class="form-control" [(ngModel)]="filtroProducto"
+                            (input)="filtrarProductos()" placeholder="Ingrese nombre o código del producto...">
+                    </div>
+
+                    <!-- Tabla con los productos para crear el pedido -->
+                    <div *ngIf="mostrarTabla()" class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Stock Disponible</th>
+                                    <th>Modo de Venta</th>
+                                    <th>Cantidad</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let producto of productosFiltrados">
+                                    <td>{{ producto.Codigo_Producto }}</td>
+                                    <td>
+                                        <div class="fw-bold">{{ producto.Nombre_Producto }}</div>
+                                    </td>
+                                    <td>{{ producto.Nombre_Marca }}</td>
+                                    <td>
+                                        <span class="fw-bold">{{ calcularStockDisponible(producto) }}</span>
+                                        <small class="text-muted d-block">{{ producto.UnidadVenta }}</small>
+                                    </td>
+                                    <td>
+                                        <select class="form-control form-control-sm"
+                                            [(ngModel)]="producto.precioVentaSeleccionado"
+                                            (change)="producto.cantidadSeleccionada = undefined">
+                                            <option value="">Seleccionar precio</option>
+                                            <option *ngFor="let precio of (precioVenta[producto.Id_Producto] || [])"
+                                                [ngValue]="precio">
+                                                {{ precio.UnidadMedida }} - {{ precio.PrecioVenta | currency }}
+                                            </option>
+                                            <option *ngIf="(precioVenta[producto.Id_Producto] || []).length === 0"
+                                                value="" disabled>
+                                                Sin precios disponibles
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" class="form-control"
+                                                [placeholder]="producto.precioVentaSeleccionado ? 'Cantidad' : 'Seleccione precio'"
+                                                min="0.01" step="0.01" [(ngModel)]="producto.cantidadSeleccionada"
+                                                [disabled]="!producto.precioVentaSeleccionado">
+                                            <span class="input-group-text" *ngIf="producto.precioVentaSeleccionado">
+                                                {{ producto.precioVentaSeleccionado.UnidadMedida }}
+                                            </span>
+                                        </div>
+                                        <small class="text-muted" *ngIf="producto.precioVentaSeleccionado">
+                                            Ingrese cantidad en {{ producto.precioVentaSeleccionado.UnidadMedida }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+                                            (click)="agregarAlPedido(producto)"
+                                            [disabled]="!producto.precioVentaSeleccionado || !producto.cantidadSeleccionada || producto.cantidadSeleccionada <= 0"
+                                            [title]="'Agregar ' + producto.Nombre_Producto">
+                                            <mat-icon>add_shopping_cart</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="filtroProducto.trim() !== '' && productosFiltrados.length === 0"
+                        class="alert alert-info">
+                        <mat-icon class="me-2">info</mat-icon>
+                        No se encontraron productos que coincidan con la búsqueda.
+                    </div>
+
+                    <div *ngIf="filtroProducto.trim() === ''" class="alert alert-secondary">
+                        <mat-icon class="me-2">search</mat-icon>
+                        Ingrese un término de búsqueda para ver los productos disponibles.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos seleccionados -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <mat-icon class="me-2">shopping_basket</mat-icon>
+                        Productos Seleccionados
+                        <span class="badge bg-light text-dark ms-2">{{ productosSeleccionados.length }}</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="productosSeleccionados.length === 0" class="alert alert-warning">
+                        <mat-icon class="me-2">warning</mat-icon>
+                        No hay productos seleccionados. Busque y agregue productos para crear el pedido.
+                    </div>
+
+                    <div *ngIf="productosSeleccionados.length > 0" class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Cantidad</th>
+                                    <th>Unidad</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Subtotal</th>
+                                    <th>IVA</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of productosSeleccionados; let i = index">
+                                    <td>
+                                        <div class="fw-bold">{{ item.nombreProducto }}</div>
+                                        <small class="text-muted">{{ item.codigoProducto }}</small>
+                                    </td>
+                                    <td>{{ item.marca }}</td>
+                                    <td>
+                                        <span class="fw-bold">{{ item.cantidad }}</span>
+                                    </td>
+                                    <td>{{ item.unidadMedida }}</td>
+                                    <td>{{ item.precioUnitario | currency }}</td>
+                                    <td>{{ item.subtotal | currency }}</td>
+                                    <td>{{ item.iva | currency }}</td>
+                                    <td>{{ item.total | currency }}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                                            (click)="eliminarDelPedido(i)" [title]="'Eliminar ' + item.nombreProducto">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-secondary">
+                                <tr>
+                                    <td colspan="5" class="text-end fw-bold">Subtotal:</td>
+                                    <td class="fw-bold">{{ calcularSubTotal() | currency }}</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-end fw-bold">IVA:</td>
+                                    <td colspan="2" class="fw-bold">{{ calcularIVA() | currency }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr class="table-primary">
+                                    <td colspan="5" class="text-end fw-bold fs-5">TOTAL:</td>
+                                    <td colspan="2" class="fw-bold fs-5">{{ calcularTotal() | currency }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary d-flex align-items-center gap-2" (click)="cerrarModalAgregarPedido()">
+                <mat-icon>close</mat-icon> Cancelar
+            </button>
+            <button class="btn btn-success d-flex align-items-center gap-2" (click)="confirmarPedido()"
+                [disabled]="productosSeleccionados.length === 0 || !nombreCliente || nombreCliente.trim() === ''"
+                [title]="productosSeleccionados.length === 0 ? 'Agregue productos al pedido' : !nombreCliente ? 'Ingrese el nombre del cliente' : 'Confirmar pedido'">
+                <mat-icon>save</mat-icon> Confirmar Pedido
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar pedidos -->
+<div class="modal" *ngIf="isModalEdicionVisible">
+    <div class="modal-content modal-xl">
+        <div class="modal-header">
+            <h5 class="modal-title">Editar Pedido {{pedidoEditando?.CodigoPedido}}</h5>
+            <button class="close-btn" (click)="cerrarModalEdicion()">X</button>
+        </div>
+        <div class="modal-body">
+
+            <!-- Información del pedido -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Cliente:</strong> {{pedidoEditando?.ClientePedido}}
+                </div>
+                <div class="col-md-6">
+                    <strong>Estado:</strong>
+                    <span class="badge" [ngClass]="{
+                        'bg-info': pedidoEditando?.EstadoPedido === 'Pendiente'
+                    }">
+                        {{pedidoEditando?.EstadoPedido}}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Botón para agregar productos -->
+            <div class="mb-3">
+                <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-2"
+                    (click)="toggleFormularioAgregar()">
+                    <mat-icon>{{ mostrandoFormularioAgregar ? 'close' : 'add' }}</mat-icon>
+                    {{ mostrandoFormularioAgregar ? 'Cancelar' : 'Agregar Productos' }}
+                </button>
+            </div>
+
+            <!-- Formulario para agregar nuevos productos -->
+            <div *ngIf="mostrandoFormularioAgregar" class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <mat-icon class="me-2">shopping_cart</mat-icon>
+                        Agregar Nuevos Productos
+                    </h6>
+                </div>
+                <div class="card-body">
+
+                    <!-- Buscador de productos -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Buscar Producto:</label>
+                        <input type="text" class="form-control" [(ngModel)]="filtroProductoEdicion"
+                            (input)="filtrarProductosEdicion()" placeholder="Ingrese nombre o código del producto...">
+                    </div>
+
+                    <!-- Tabla de productos filtrados para agregar -->
+                    <div *ngIf="mostrarTablaEdicion()" class="table-responsive">
+                        <table class="table table-striped table-hover table-sm">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Stock Disponible</th>
+                                    <th>Modo de Venta</th>
+                                    <th>Cantidad</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let producto of productosFiltradosEdicion">
+                                    <td>{{ producto.Codigo_Producto }}</td>
+                                    <td>{{ producto.Nombre_Producto }}</td>
+                                    <td>{{ producto.Nombre_Marca }}</td>
+                                    <td>
+                                        {{ calcularStockDisponible(producto) }}
+                                        <small class="text-muted d-block">{{ producto.UnidadVenta }}</small>
+                                    </td>
+                                    <td>
+                                        <select class="form-control form-control-sm"
+                                            [(ngModel)]="producto.precioVentaSeleccionado"
+                                            (change)="producto.cantidadSeleccionada = undefined">
+                                            <option value="">Seleccionar precio</option>
+                                            <option *ngFor="let precio of (precioVenta[producto.Id_Producto] || [])"
+                                                [ngValue]="precio">
+                                                {{ precio.UnidadMedida }} - {{ precio.PrecioVenta | currency }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" class="form-control"
+                                                [placeholder]="producto.precioVentaSeleccionado ? 'Cantidad' : 'Seleccione precio'"
+                                                min="0.01" step="0.01" [(ngModel)]="producto.cantidadSeleccionada"
+                                                [disabled]="!producto.precioVentaSeleccionado">
+                                            <span class="input-group-text" *ngIf="producto.precioVentaSeleccionado">
+                                                {{ producto.precioVentaSeleccionado.UnidadMedida }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+                                            (click)="agregarProductoEdicion(producto)"
+                                            [disabled]="!producto.precioVentaSeleccionado || !producto.cantidadSeleccionada || producto.cantidadSeleccionada <= 0">
+                                            <mat-icon>add</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="filtroProductoEdicion.trim() !== '' && productosFiltradosEdicion.length === 0"
+                        class="alert alert-info">
+                        <mat-icon class="me-2">info</mat-icon>
+                        No se encontraron productos disponibles para agregar.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de productos en el pedido (editables) -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <mat-icon class="me-2">list</mat-icon>
+                        Productos en el Pedido
+                        <span class="badge bg-light text-dark ms-2">{{ productosEditados.length }}</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="productosEditados.length === 0" class="alert alert-warning">
+                        <mat-icon class="me-2">warning</mat-icon>
+                        No hay productos en este pedido.
+                    </div>
+
+                    <div *ngIf="productosEditados.length > 0" class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Cantidad</th>
+                                    <th>Modo de venta</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Subtotal</th>
+                                    <th>IVA</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of productosEditados; let i = index"
+                                    [class.table-success]="item.esNuevo">
+                                    <td>
+                                        <div class="fw-bold">{{ item.nombreProducto }}</div>
+                                        <!-- <small class="text-muted">{{ item.codigoProducto }}</small> -->
+                                    </td>
+                                    <td>{{ item.marca }}</td>
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold text-center">{{ item.cantidad }}</span>
+                                            <!-- <span class="text-muted">{{ item.unidadMedida }}</span> -->
+                                        </div>
+                                    </td>
+                                    <td>{{ item.unidadMedida }}</td>
+                                    <td>{{ item.precioUnitario | currency }}</td>
+                                    <td>{{ item.subtotal | currency }}</td>
+                                    <td>{{ item.iva | currency }}</td>
+                                    <td>{{ item.total | currency }}</td>
+                                    <td>
+                                        <span *ngIf="item.esNuevo" class="badge bg-success">Nuevo</span>
+                                        <span *ngIf="!item.esNuevo" class="badge bg-info">Existente</span>
+                                    </td>
+                                    <td>
+                                        <button *ngIf="!item.esNuevo" class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                                            (click)="eliminarItemEdicion(i)"
+                                            [title]="'Eliminar ' + item.nombreProducto">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                        <button *ngIf="item.esNuevo" class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                                            (click)="eliminarDelPedidoEdicion(i)"
+                                            [title]="'Eliminar ' + item.nombreProducto">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-secondary">
+                                <tr>
+                                    <td colspan="5" class="text-end fw-bold">Subtotal:</td>
+                                    <td class="fw-bold">{{ subtotalEdicion | currency }}</td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-end fw-bold">IVA:</td>
+                                    <td colspan="2" class="fw-bold">{{ ivaEdicion | currency }}</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr class="table-primary">
+                                    <td colspan="5" class="text-end fw-bold fs-5">TOTAL:</td>
+                                    <td colspan="2" class="fw-bold fs-5">{{ totalEdicion | currency }}</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary d-flex align-items-center gap-2" (click)="cerrarModalEdicion()">
+                <mat-icon>close</mat-icon> Cancelar
+            </button>
+            <button class="btn btn-success d-flex align-items-center gap-2" (click)="confirmarEdicionPedido()"
+                [disabled]="productosEditados.length === 0">
+                <mat-icon>save</mat-icon> Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles del pedido -->
+<div class="modal" *ngIf="isModalDetalleVisible">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Detalle del Pedido {{pedidoSeleccionado?.CodigoPedido}}</h5>
+            <button class="close-btn" (click)="cerrarModalDetallePedido()">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Cliente: </strong> {{pedidoSeleccionado?.ClientePedido}}
+                </div>
+                <div class="col-md-6">
+                    <strong>Estado: </strong>
+                    <span class="badge" [ngClass]="{
+                            'bg-info': pedidoSeleccionado?.IdEstado === 4,
+                            'bg-secondary': pedidoSeleccionado?.IdEstado === 6
+                        }">
+                        {{pedidoSeleccionado?.EstadoPedido}}
+                    </span>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">Producto</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Modo de Venta</th>
+                            <th class="text-center">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let detalle of detallePedido">
+                            <td>{{detalle.NombreProducto}}</td>
+                            <td class="text-center">{{detalle.Cantidad}}</td>
+                            <td>{{detalle.ModoVenta}}</td>
+                            <td class="text-center">{{detalle.SubTotalProducto | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><b>Subtotal: </b></td>
+                            <td class="text-center"><b>{{calcularSubTotalPedido() | currency}}</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><b>IVA: </b></td>
+                            <td class="text-center"><b>{{calcularTotalIvaPedido() | currency }}</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><b>Total: </b></td>
+                            <td class="text-center"><b>{{calcularTotalPedido() | currency }}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

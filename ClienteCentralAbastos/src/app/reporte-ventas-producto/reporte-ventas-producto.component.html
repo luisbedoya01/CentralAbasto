@@ -1,0 +1,58 @@
+<div class="container mt-4">
+    <h2> Top 5 Productos Más Vendidos</h2>
+    <!-- <hr> -->
+    <br>
+
+    <form [formGroup]="reporteForm" (ngSubmit)="generarReporte()" class="mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-md-5">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Fecha de Inicio</mat-label>
+                    <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio">
+                    <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInicio></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-5">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Fecha de Fin</mat-label>
+                    <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin">
+                    <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFin></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <button mat-raised-button color="primary" type="submit" [disabled]="reporteForm.invalid || estaCargando"
+                    class="w-100">
+                    Generar
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div *ngIf="estaCargando" class="text-center p-5">
+        Cargando datos del reporte...
+    </div>
+
+    <div *ngIf="!estaCargando && chartData.length > 0" style="height: 400px;">
+        <ngx-charts-bar-vertical [results]="chartData" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+            [xAxis]="true" [yAxis]="true" [legend]="false">
+            <ng-template #tooltipTemplate let-model="model">
+                <div class="tooltip-content">
+                    <strong>{{ model.name }}</strong><br>
+                    Ingresos Generados: {{ model.value | currency:'USD':'symbol':'1.2-2' }}<br>
+                    Unidades Vendidas: {{ model.extra.unidades | number: '1.0-0' }}
+                </div>
+            </ng-template>
+        </ngx-charts-bar-vertical>
+    </div>
+
+    <div *ngIf="!estaCargando && ventasFlag && chartData.length === 0" class="alert alert-warning text-center">
+        No se encontraron resultados para el rango de fechas seleccionado.
+    </div>
+
+    <div *ngIf="!ventasFlag" class="alert alert-info">
+        Selecciona un rango de fechas para generar el reporte.
+    </div>
+
+</div>
