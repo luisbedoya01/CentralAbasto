@@ -1,0 +1,28 @@
+<div class="contenedor">
+    <mat-card class="card-cambio-clave">
+        <mat-card-header>
+            <mat-card-title>Cambiar clave</mat-card-title>
+            <mat-card-subtitle>Por favor, establece una nueva clave.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="cambioClaveForm" (ngSubmit)="cambiarClave()">
+                <mat-form-field appareance="outline" class="w-100 mb-3 ">
+                    <mat-label>Nueva clave</mat-label>
+                    <input matInput [type]="hideNueva ? 'password' : 'text'" formControlName="Password" required>
+                    <button type="button" mat-icon-button matSuffix (click)="hideNueva = !hideNueva" tabindex="-1">
+                        <mat-icon>{{ hideNueva ? 'visibility_off': 'visibility'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="cambioClaveForm.get('nuevaClave')?.hasError('required')">La nueva clave es
+                        requerida.</mat-error>
+                    <mat-error *ngIf="cambioClaveForm.get('nuevaClave')?.hasError('minlength')">Debe tener al menos 8
+                        caracteres.</mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" type="submit" [disabled]="cambioClaveForm.invalid" class="w-100">
+                    Guardar nueva clave
+                </button>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -13,6 +13,7 @@ import { ReporteVentasProductoComponent } from './reporte-ventas-producto/report
 import { ReporteProductosBajoStockComponent } from './reporte-productos-bajo-stock/reporte-productos-bajo-stock.component';
 import { PrincipalLayoutComponent } from './principal-layout/principal-layout.component';
 import { LoginGuard } from './login.guard';
+import { CambioClaveComponent } from './cambio-clave/cambio-clave.component';
 
 export const routes: Routes = [
     // Rutas públicas (sin protección)
@@ -34,6 +35,7 @@ export const routes: Routes = [
             { path: 'reporteVentas', component: ReporteVentasComponent},
             { path: 'reporteProductos', component: ReporteVentasProductoComponent},
             { path: 'reporteProductosBajoStock', component: ReporteProductosBajoStockComponent},
+            { path: 'cambioClave', component: CambioClaveComponent},
         ]
     },
 

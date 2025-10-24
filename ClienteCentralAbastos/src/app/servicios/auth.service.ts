@@ -78,15 +78,19 @@ export class AuthService {
 
   // Método para establecer usuario (usado en login)
   setUsuario(usuario: any) {
+    const usuarioGuardar = { ...usuario };
+    delete usuarioGuardar.primerLogin;
     // Actualizar el BehaviorSubject
     this.usuarioObject.next(usuario);
     this.logueadoSubject.next(true);
 
-    // Guardar en localStorage
+    // Guardar en sessionStorage
     if (isPlatformBrowser(this.platformId)) {
       //localStorage.setItem('authData', JSON.stringify(usuario));
-      sessionStorage.setItem('authData', JSON.stringify(usuario));
+      //sessionStorage.setItem('authData', JSON.stringify(usuario));
+      sessionStorage.setItem('authData', JSON.stringify(usuarioGuardar));
     }
+    this.resetInactivityTimer();
   }
 
   // Configura el monitoreo de actividad

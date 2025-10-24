@@ -42,7 +42,12 @@ export class LoginComponent {
       this.loginService.login(this.usuarioLogin.value).subscribe(
         (data: any) => {
           this.authService.setUsuario(data);
-          this.router.navigate(['/principal']);
+          //console.log('Data obtenida: ', data);
+          if (data.primerLogin) {
+            this.router.navigate(['/cambioClave']);
+          } else {
+            this.router.navigate(['/principal']);  
+          }
         },
         (error) => {
           if (error.status === 401) {

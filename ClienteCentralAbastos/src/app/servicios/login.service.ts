@@ -33,4 +33,13 @@ export class LoginService {
   eliminarUsuario(id: number, usuario: any) {
     return this.http.post(this.baseUrl + "usuario/" + id + "/", usuario);
   }
+
+  // Metodo 1: con clave como parametro
+  // cambiarClave(id: number, clave: string) {
+  //   return this.http.post(this.baseUrl + "usuario/" + id + "/", clave);
+  // }
+  // Metodo 2: con usuario como parametro
+  cambiarClave(id: number, usuario: any) {
+    return this.http.post(this.baseUrl + "usuario/" + id + "/", usuario);
+  }
 }

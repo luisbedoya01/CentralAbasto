@@ -31,15 +31,25 @@ def loginViewPost(request):
             if usuario_db:
                 usuario = usuario_db[0]
                 clave_hash_db = usuario.get('clave')
+                ultimo_login_db = usuario.get('ultimoLogin')
                 
                 if check_password(clave_plana, clave_hash_db):
                     # Credenciales correctas
+                    es_primer_login = ultimo_login_db is None
+                    
+                    # Actualizar el campo de ultimoLogin si es el primer login
+                    with connection.cursor() as update_cursor:
+                        update_cursor.execute(
+                            "UPDATE abasto_usuarios SET ultimoLogin = NOW() WHERE id = %s", 
+                            [usuario.get('id')]
+                        )
                     data = {
                         "id": usuario.get('id'),
                         "cedula": usuario.get('cedula'),
                         "nombres": usuario.get('nombres'),
                         "apellidos": usuario.get('apellidos'),
-                        "idrol": usuario.get('idrol')
+                        "idrol": usuario.get('idrol'),
+                        "primerLogin": es_primer_login
                     }
                     return Response(data, status=200)
                 return Response({"mensaje": "Usuario o clave incorrecta"}, status=401)
@@ -144,7 +154,7 @@ def registrarViewPost(request, id=None):
             transaccion = request.data.get('Transaccion', '')
             data_request = request.data
             # Verificar si la transaccion tiene manejo de clave
-            if transaccion in ['registrar', 'editar_usuario']:
+            if transaccion in ['registrar', 'editar_usuario', 'cambiar_clave']:
                 clave_plana = data_request.get('Password')
                 
                 # Si se proporciono una clave, hashearla
@@ -161,6 +171,8 @@ def registrarViewPost(request, id=None):
                     json_data = json.dumps(datos_modificados)
                 else:
                     # Si no hay clave, usar los datos originales
+                    if transaccion == 'cambiar_clave' and not clave_plana:
+                        return Response({"mensaje":"La nueva contraseña es requerida"}, status=400)
                     json_data = json.dumps(data_request)
             else:
                 json_data = json.dumps(data_request)
@@ -182,7 +194,14 @@ def registrarViewPost(request, id=None):
                 cur.callproc(nameSP.registrarUsuario, [json_data, transaccion])
                 cur.close()
                 return Response({"mensaje":"Usuario eliminado correctamente"},status=200)
-            
+            elif transaccion == 'cambiar_clave':
+                if not data_request.get('IdUsuario'):
+                    return Response({"mensaje": "Se requiere el ID del usuario para cambiar la clave"}, status=400)
+                
+                cur = connection.cursor()
+                cur.callproc(nameSP.registrarUsuario,[json_data, transaccion])
+                cur.close()
+                return Response({"mensaje": "Clave actualizada correctamente"}, status=200)
             else:
                 return Response({"mensaje":"Transacción no válida"},status=400)
         except Exception as e:
