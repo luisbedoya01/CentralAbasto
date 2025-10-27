@@ -1,30 +1,35 @@
-
 <div class="login-container">
-  
-  <div class="login-form">  
+
+  <div class="login-form">
     <img width="150px" height="150px" src="assets/login.png" alt="image">
     <br><br>
     <!-- Formulario de Login -->
-    <form [formGroup]="usuarioLogin" style="width: 100%;"  (ngSubmit)="onLogin()">
+    <form [formGroup]="usuarioLogin" style="width: 100%;" (ngSubmit)="onLogin()">
       <div class="button-group">
         <mat-form-field appearance="outline" style="width: -webkit-fill-available;">
           <mat-label>Cédula</mat-label>
           <input matInput formControlName="Cedula" autofocus>
           <mat-icon matSuffix>numbers</mat-icon>
         </mat-form-field>
-        
+
         <mat-form-field appearance="outline" style="width: -webkit-fill-available;">
-            <mat-label>Contraseña</mat-label>
-            <input matInput [type]="hide ? 'password' : 'text'" formControlName="Password">
-            <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" formControlName="Password">
+          <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide">
             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
+          </button>
         </mat-form-field>
       </div>
       <div class="button-group">
         <!-- Botón Iniciar Sesión -->
-        <button type="submit" class="btn-login">
-         Iniciar sesión
+        <button type="submit" class="btn btn-dark" [disabled]="usuarioLogin.invalid || esCarga" style="border-radius: 25px;">
+        <!-- <button type="submit" class="btn-login" [disabled]="usuarioLogin.invalid || esCarga"> -->
+        <!-- <button type="submit" [disabled]="usuarioLogin.invalid || esCarga"> -->
+          <mat-spinner *ngIf="esCarga" diameter="20" color="accent"
+            style="display: inline-block; margin-right: 8px;"></mat-spinner>
+          <span *ngIf="!esCarga">Iniciar sesión</span>
+          <span *ngIf="esCarga">Verificando...</span>
         </button>
         <!-- Botón Registrarse -->
         <!-- <button type="button" (click)="onRegister()" class="btn-register">Registrarse</button> -->

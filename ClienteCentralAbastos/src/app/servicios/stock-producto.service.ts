@@ -17,7 +17,7 @@ export class StockProductoService {
     }
     const url = `${this.baseUrl}stockproductoget/${idProducto}/`;
     const params = new HttpParams().set('Transaccion', transaccion);
-    
+
     return this.http.get<any>(url, { params });
   }
 

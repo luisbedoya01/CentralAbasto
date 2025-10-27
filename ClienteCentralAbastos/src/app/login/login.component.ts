@@ -8,12 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../servicios/auth.service';
 import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule, MatSnackBarModule, CommonModule],
+  imports: [MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule, MatSnackBarModule, CommonModule, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -23,6 +24,7 @@ export class LoginComponent {
   cedula: any;
   password: any;
   respuesta: any = null;
+  esCarga = false;
 
   constructor(private router: Router, private loginService: LoginService,
     private authService: AuthService,
@@ -39,6 +41,7 @@ export class LoginComponent {
     this.password = this.usuarioLogin.value.Password;
 
     if (this.cedula && this.password) {
+      this.esCarga = true;
       this.loginService.login(this.usuarioLogin.value).subscribe(
         (data: any) => {
           this.authService.setUsuario(data);

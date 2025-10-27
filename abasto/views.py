@@ -612,7 +612,8 @@ def getMedidasConversionViewGet(request):
                 "Id_Unidad_Convertir": row[3],
                 "Nombre_Medida_Convertir": row[4],
                 "Factor_Conversion": float(row[5]),
-                "Estado_Medida": row[6]
+                "Estado_Medida": row[6],
+                "IdEstado": row[7]
             }
             json_data = json.dumps(data)
             jd = json.loads(json_data)

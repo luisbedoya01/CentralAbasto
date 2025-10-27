@@ -34,24 +34,32 @@
                     <td>{{ medida.Nombre_Medida_Convertir }}</td>
                     <td>{{ medida.Factor_Conversion }}</td>
                     <td>
-                        <span class="badge" [ngClass]="{
+                        <!-- <span class="badge" [ngClass]="{
                             'bg-success': medida.Estado_Medida === 'Activo',
                             'bg-danger': medida.Estado_Medida === 'Inactivo'
+                        }">
+                            {{ medida.Estado_Medida }}
+                        </span> -->
+                        <span class="badge" [ngClass]="{
+                            'bg-success': medida.IdEstado === 1,
+                            'bg-danger': medida.IdEstado === 3
                         }">
                             {{ medida.Estado_Medida }}
                         </span>
                     </td>
                     <td>
-                        <div class="d-flex gap-1">
+                        <div class="d-flex gap-1 justify-content-center">
                             <button class="btn btn-warning btn-sm d-flex align-items-center gap-1"
-                                (click)="editarMedida(medida)">
+                                (click)="editarMedida(medida)"
+                                [title]="'Editar conversion de ' + medida.Nombre_Medida_Principal + ' a ' + medida.Nombre_Medida_Convertir">
                                 <mat-icon>search</mat-icon>
-                                Editar
+                                <!-- Editar -->
                             </button>
                             <button class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-                                (click)="eliminarMedida(medida)">
+                                (click)="eliminarMedida(medida)"
+                                [title]="'Eliminar conversion de ' + medida.Nombre_Medida_Principal + ' a ' + medida.Nombre_Medida_Convertir">
                                 <mat-icon>delete</mat-icon>
-                                Eliminar
+                                <!-- Eliminar -->
                             </button>
                         </div>
                     </td>
@@ -223,4 +231,3 @@
         </div>
     </div>
 </div>
-

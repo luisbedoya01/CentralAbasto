@@ -1,6 +1,12 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-center">Facturar</h2>
+        <h2 class="text-center">Facturar Pedidos</h2>
+    </div>
+    <div class="mb-3">
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Buscar pedido ... " [(ngModel)]="filtro"
+                (ngModelChange)="filtrarPedidos()">
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -17,7 +23,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let pedido of pedidos">
+                <!-- <tr *ngFor="let pedido of pedidos"> -->
+                <tr *ngFor="let pedido of pedidosPaginados">
                     <td>{{pedido.CodigoPedido}}</td>
                     <td>{{pedido.ClientePedido}}</td>
                     <td class="text-center">{{pedido.SubtotalPedido | currency}}</td>
@@ -46,6 +53,35 @@
             </tbody>
         </table>
     </div>
+    <div *ngIf="mensajeNoResultados" class="alert alert-warning text-center" role="alert">{{mensajeNoResultados}}</div>
+</div>
+
+<!-- Paginado de la tabla -->
+<div class="d-flex justify-content-center align-items-center gap-4 mb-3">
+    <!-- Selector de elementos por pagina -->
+    <div>
+        Mostrar
+        <select [(ngModel)]="itemsPorPagina" (change)="cambiarItemsPorPagina()"
+            class="form-select d-inline-block w-auto ms-2">
+            <option *ngFor="let cantidad of opcionesPorPagina" [value]="cantidad">{{cantidad}}</option>
+        </select>
+        elementos
+    </div>
+    <!-- Paginacion -->
+    <nav *ngIf="paginasTotales > 1">
+        <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="paginaActual === 1">
+                <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+            </li>
+            <li class="page-item" *ngFor="let pagina of [].constructor(paginasTotales); let i = index"
+                [class.active]="paginaActual === i + 1">
+                <a class="page-link" (click)="cambiarPagina(i + 1)">{{ i + 1}}</a>
+            </li>
+            <li class="page-item" [class.disabled]="paginaActual === paginasTotales">
+                <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <div class="modal" *ngIf="isModalFacturarVisible">

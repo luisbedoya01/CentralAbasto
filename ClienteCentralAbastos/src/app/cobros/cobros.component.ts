@@ -48,6 +48,14 @@ export class CobrosComponent implements OnInit {
   subTotalPedido: any;
   ivaPedido: any;
   totalPedido: any;
+  filtro: string = '';
+  paginaActual: number = 1;
+  itemsPorPagina: number = 5;
+  opcionesPorPagina: number[] = [5, 10, 20];
+  paginasTotales: number = 0;
+  pedidosFiltrados: any[] = [];
+  pedidosPaginados: any[] = [];
+  mensajeNoResultados: string = '';
 
   pedidoSeleccionado: any;
 
@@ -87,11 +95,51 @@ export class CobrosComponent implements OnInit {
     this.obtenerPedidos();
   }
 
+  filtrarPedidos() {
+    const texto = this.filtro.trim().toLocaleLowerCase();
+    this.pedidosFiltrados = this.pedidos.filter(p =>
+      p.CodigoPedido.toLowerCase().includes(texto) ||
+      p.ClientePedido.toLowerCase().includes(texto) ||
+      p.EstadoPedido.toLowerCase().includes(texto) ||
+      p.FechaPedido.toLowerCase().includes(texto)
+    );
+
+    if (this.pedidosFiltrados.length === 0) {
+      this.mensajeNoResultados = 'No se encontraron pedidos que coincidan con ' + `"${this.filtro}"`;
+    } else {
+      this.mensajeNoResultados = '';
+    }
+
+    this.paginaActual = 1;
+    this.actualizarPaginacion();
+  }
+
+  actualizarPaginacion() {
+    const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+    const fin = inicio + this.itemsPorPagina;
+    this.paginasTotales = Math.ceil(this.pedidosFiltrados.length / this.itemsPorPagina);
+    this.pedidosPaginados = this.pedidosFiltrados.slice(inicio, fin);
+  }
+
+  cambiarItemsPorPagina() {
+    this.paginaActual = 1;
+    this.actualizarPaginacion();
+  }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina >= 1 && nuevaPagina <= this.paginasTotales) {
+      this.paginaActual = nuevaPagina;
+      this.actualizarPaginacion();
+    }
+  }
+
   obtenerPedidos() {
     this.pedidoService.getPedido('consultar_pedidos_pendientes').subscribe(
       (data: any) => {
         if (Array.isArray(data)) {
           this.pedidos = data;
+          this.pedidosFiltrados = data;
+          this.filtrarPedidos();
         } else {
           console.log('Error la respuesta del API no es un array', data);
         }
