@@ -255,9 +255,9 @@ export class MedidasConversionComponent implements OnInit {
       Id_Unidad_Principal: medida.Id_Unidad_Principal,
       Id_Unidad_Convertir: medida.Id_Unidad_Convertir,
       Factor_Conversion: medida.Factor_Conversion,
-    });      
+    });
   }
-  
+
   eliminarMedida(medida: any) {
     this.medidaSeleccionada = medida;
     this.isModalVisibleEliminar = true;

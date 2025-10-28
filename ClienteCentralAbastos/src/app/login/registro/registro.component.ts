@@ -4,6 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { LoginService } from '../../servicios/login.service';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RolServiceService } from '../../servicios/rol-service.service';
+import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-registro',
@@ -182,6 +184,72 @@ export class RegistroComponent implements OnInit {
     });
 
     //console.log('Id del usuario seleccionado para editar:', this.usuarioSeleccionado.id);
+  }
+
+  actualizarClaveUsuario(usuario: any) {
+    this.usuarioSeleccionado = usuario;
+    //console.log('Usuario seleccionado para el cambio de clave: ', this.usuarioSeleccionado);
+    const nombreUsuario = this.usuarioSeleccionado.nombres + ' ' + this.usuarioSeleccionado.apellidos;
+    //console.log('Info ', nombreUsuario);
+    Swal.fire({
+      title: 'Confirmar cambio',
+      // html: `
+      //       <div class="text-start">
+      //           <p>¿Está seguro de cambiar la clave del usuario?</p>
+      //           <p class="text-muted small"> ${nombreUsuario}</p>
+      //       </div>
+      //   `,
+      html: `
+          <div class="text-start">
+              <p>¿Está seguro de cambiar la clave del usuario?</p>
+          </div>
+          <div class="text-center">
+              <strong><p class="text-muted small">${nombreUsuario}</p></strong>
+          </div>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cambiar',
+      confirmButtonColor: 'rgba(51, 105, 221, 1)',
+      cancelButtonColor: '#6c757d',
+      cancelButtonText: 'No, cancelar',
+      allowOutsideClick: false
+    }).then((result)=>{
+      if (result.isConfirmed) {
+        this.procesarCambioClave();
+      }
+    });
+  }
+
+  async procesarCambioClave(): Promise<void> {
+    try {
+      const IdUsuario = this.usuarioSeleccionado.id;
+      const usuario = {
+        Transaccion: 'cambiar_clave',
+        IdUsuario: this.usuarioSeleccionado.id,
+        Password: this.usuarioSeleccionado.id
+      };
+      await firstValueFrom(this.loginService.cambiarClave(IdUsuario, usuario));
+      Swal.fire({
+        icon: 'success',
+        title: '¡Clave Cambiada!',
+        text: 'La clave ha sido actualizada correctamente.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'rgba(38,218, 77,1)',
+        allowOutsideClick: false,
+        showClass: { popup: "animate_animated animatefadeIn animate_faster" },
+      });
+    } catch (error) {
+      const errorMessage = JSON.stringify(error, null, 2);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al actualizar clave' + errorMessage,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#d33',
+        showClass: { popup: "animate_animated animatefadeIn animate_faster" },
+      });
+    }
   }
 
   obtenerRol() {
