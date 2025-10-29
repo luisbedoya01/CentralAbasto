@@ -479,6 +479,23 @@ def agregarUnidadViewPost(request):
             return Response({"mensaje": str(e)}, status=400)
         
 @api_view(['GET','POST'])
+def agregarRolViewPost(request):
+    if request.method == 'POST':
+        try:
+            transaccion = request.data.get('Transaccion','')
+            json_data = json.dumps(request.data)
+            
+            if transaccion == 'agregar_rol':
+                cur = connection.cursor()
+                cur.callproc(nameSP.agregarRol, [json_data, transaccion])
+                cur.close()
+                return Response({"mensaje": "Rol registrado correctamente"}, status=200)
+            else:
+                return Response({"mensaje": "Transacción no válida"}, status=400)
+        except Exception as e:
+            return Response({"mensaje":str(e)}, status=400)
+        
+@api_view(['GET','POST'])
 def agregarProveedorViewPost(request):
     if request.method == 'POST':
         try:

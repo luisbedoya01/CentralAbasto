@@ -14,4 +14,8 @@ export class RolServiceService {
     let params = new HttpParams().set('Transaccion', transaccion);
     return this.http.get<any[]>(`${this.baseUrl}rolget/`, { params });
   }
+
+  agregarRol(rol: any) {
+    return this.http.post(this.baseUrl + "rol/", rol);
+  }
 }

@@ -132,25 +132,19 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <b><label for="rolUsuario" class="form-label">Rol:</label></b>
                         <div class="col-md-6">
-                            <div class="d-flex gap-2 align-items-stretch">
-                                <select id="rolUsuario" class="form-select" formControlName="IdRol">
+                            <label for="rolUsuario" class="form-label"><b>Rol:</b></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <select id="rolUsuario" class="form-select flex-grow-1" formControlName="IdRol">
                                     <option *ngFor="let rol of roles" [value]="rol.IdRol">{{ rol.NombreRol }}</option>
                                 </select>
-                                <button class="btn btn-secondary">Hola</button>
+
+                                <button class="btn btn-secondary text-nowrap d-flex align-items-center gap-1"
+                                    type="button" (click)="abrirModalRol()">
+                                    <mat-icon>add</mat-icon> <span>Agregar rol</span> </button>
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="row mb-3">
-                        <b><label for="rolUsuario" class="form-label">Rol:</label></b>
-                        <div class="col-md-6">
-                            <select id="rolUsuario" class="form-select" formControlName="IdRol">
-                                <option *ngFor="let rol of roles" [value]="rol.IdRol">{{ rol.NombreRol }}</option>
-                            </select>
-                            <button>Hola</button>
-                        </div>
-                    </div> -->
                     <div class="d-flex gap-1">
                         <!-- Botón Guardar (cuando se agrega un nuevo usuario) -->
                         <button *ngIf="!modoEdicion" type="submit"
@@ -198,4 +192,32 @@
 </div>
 
 <!-- Modal para agregar rol -->
-<!-- <div class="modal"></div> -->
+<div class="modal" *ngIf="isModalRolVisible">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Agregar Rol</h5>
+            <button class="close-btn" (click)="cerrarModalRol()">X</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="rolForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <b><label for="nombreRol" class="form-label">Nombre del rol:</label></b>
+                        <input type="text" class="form-control" formControlName="Nombre" required>
+                    </div>
+                </div>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-primary d-flex align-items-center gap-1" [disabled]="rolForm.invalid"
+                        (click)="guardarRol()">
+                        <mat-icon>save</mat-icon>
+                        Guardar
+                    </button>
+                    <button class="btn btn-danger d-flex align-items-center gap-2" (click)="cerrarModalRol()">
+                        <mat-icon>not_interested</mat-icon>
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

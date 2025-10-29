@@ -32,3 +32,4 @@ class nameSP():
     agregarCliente = 'SetCliente'
     obtenerCliente = 'GetCliente'
     obtenerReportes = 'GetReportes'
+    agregarRol = 'SetRol'

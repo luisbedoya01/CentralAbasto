@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/v1/usuarioget/',views.obtenerUsuarioViewGet),
     path('api/v1/usuario/<int:id>/', views.registrarViewPost),
     path('api/v1/rolget/', views.getRolViewGet),
+    path('api/v1/rol/', views.agregarRolViewPost),
     path('api/v1/medidaconversionget/',views.getMedidasConversionViewGet),
     path('api/v1/medidaconversionget/<int:id>',views.getMedidasConversionViewGet),
     path('api/v1/medidaconversion/', views.agregarMedidasConversionViewPost),

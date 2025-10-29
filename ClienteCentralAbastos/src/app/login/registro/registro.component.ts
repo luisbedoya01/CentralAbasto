@@ -42,6 +42,8 @@ export class RegistroComponent implements OnInit {
   claveUsuario: any;
   respuesta: any = null;
 
+  nombreRol: any;
+
   constructor(private loginService: LoginService, private rolService: RolServiceService) { }
 
   ngOnInit(): void {
@@ -56,6 +58,11 @@ export class RegistroComponent implements OnInit {
     Apellidos: new FormControl('', Validators.required),
     IdRol: new FormControl('', Validators.required),
     Password: new FormControl(),
+    Transaccion: new FormControl(),
+  });
+
+  rolForm = new FormGroup({
+    Nombre: new FormControl('', Validators.required),
     Transaccion: new FormControl(),
   });
 
@@ -354,6 +361,50 @@ export class RegistroComponent implements OnInit {
     this.usuarioForm.reset();
   }
 
+  guardarRol() {
+    this.nombreRol = this.rolForm.value.Nombre;
+    this.rolForm.value.Transaccion = "agregar_rol";
+
+    if (this.rolForm.valid) {
+      this.rolService.agregarRol(this.rolForm.value).subscribe(
+        (data: any) => {
+          this.respuesta = data;
+          if (data.length === 0) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo registrar el rol',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+            });
+          } else {
+            Swal.fire({
+              title: '¡Rol Registrado!',
+              text: 'Rol registrado correctamente',
+              icon: 'success',
+              timer: 1000,
+              showConfirmButton: false
+            });
+            this.obtenerRol();
+            this.cerrarModalRol();
+          }
+        },
+        (error) => {
+          const errorMessage = JSON.stringify(error, null, 2);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al registrar rol ' + errorMessage,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d33',
+            showClass: { popup: "animate_animated animatefadeIn animate_faster" },
+          });
+        }
+      );
+    }
+
+  }
+
   eliminarUsuario(usuario: any) {
     this.usuarioSeleccionado = usuario;
     const nombreUsuario = this.usuarioSeleccionado.nombres + ' ' + this.usuarioSeleccionado.apellidos;
@@ -416,4 +467,14 @@ export class RegistroComponent implements OnInit {
   cerrarModalDelete() {
     this.isConfirmDeleteModalVisible = false;
   }
+
+  abrirModalRol() {
+    this.isModalRolVisible = true;
+  }
+
+  cerrarModalRol() {
+    this.isModalRolVisible = false;
+    this.rolForm.reset();
+  }
+
 }
