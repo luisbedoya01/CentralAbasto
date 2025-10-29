@@ -63,7 +63,6 @@ export class CambioClaveComponent implements OnInit {
       allowOutsideClick: false
     }).then((result) => {
       if (result.isConfirmed) {
-        //this.eliminarProductoConfirmado();
         this.procesaCambiarClave();
       }
     });
@@ -103,13 +102,6 @@ export class CambioClaveComponent implements OnInit {
         showClass: { popup: "animate_animated animatefadeIn animate_faster" },
       });
     }
-    //console.log('Usuario seleccionado', this.usuarioSeleccionado);
-    // const usuario = {
-    //   Transaccion: 'cambio_clave',
-    //   IdUsuario: this.usuarioSeleccionado.id,
-    //   Password: this.cambioClaveForm.value.Password
-    // };
-    // console.log('Datos a enviar', usuario);
   }
 
   limpiarFormulario() {

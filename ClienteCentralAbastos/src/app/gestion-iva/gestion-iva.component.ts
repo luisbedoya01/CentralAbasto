@@ -7,7 +7,7 @@ import { UnidadMedidaService } from '../servicios/unidad-medida.service';
 import { UnidadService } from '../servicios/unidad.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { IvaService } from '../servicios/iva.service';
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-gestion-iva',
@@ -72,7 +72,7 @@ export class GestionIvaComponent implements OnInit {
     this.descripcionIva = this.ivaForm.value.DescripcionIva;
     this.porcentajeIva = this.ivaForm.value.PorcentajeIva;
     this.ivaForm.value.Transaccion = this.modoEdicion ? "editar_iva" : "agregar_iva";
-    console.log('Datos a enviar',this.ivaForm.value);
+    console.log('Datos a enviar', this.ivaForm.value);
 
     if (this.ivaForm.valid) {
       if (this.modoEdicion) {
@@ -81,31 +81,35 @@ export class GestionIvaComponent implements OnInit {
             this.respuesta = data;
             console.log(data);
             if (data.length === 0) {
-              this.snackBar.open('Error al editar IVA', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['error-snackbar']
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al editar el IVA',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
               });
+
             } else {
-              this.snackBar.open('IVA editado correctamente', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['succes-snackbar']
-              });
               this.obtenerIva();
               this.cerrarModalAgregarIVA();
+              Swal.fire({
+                title: '¡IVA Editado!',
+                text: 'El IVA ha sido editado correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+              });
             }
-            console.log('Respuesta de la API:', data);
           },
           (error) => {
             const errorMessage = JSON.stringify(error, null, 2);
-            this.snackBar.open('Error en la solicitud al servidor. Consulte con el administrador:' + errorMessage, 'Cerrar', {
-              duration: 4000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['error-snackbar']
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al actualizar IVA' + errorMessage,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+              showClass: { popup: "animate_animated animatefadeIn animate_faster" },
             });
           }
         );
@@ -115,32 +119,34 @@ export class GestionIvaComponent implements OnInit {
             this.respuesta = data;
             console.log(data);
             if (data.length === 0) {
-              this.snackBar.open('Error al agregar IVA', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['error-snackbar']
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo registrar el IVA',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
               });
             } else {
-              this.snackBar.open('IVA agregado correctamente', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['succes-snackbar']
-              });
               this.obtenerIva();
               this.cerrarModalAgregarIVA();
+              Swal.fire({
+                title: '¡IVA Registrado!',
+                text: 'El IVA ha sido registrado correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+              });
             }
-            console.log('Respuesta de la API:', data);
           },
           (error) => {
             const errorMessage = JSON.stringify(error, null, 2);
-            console.log('Error', errorMessage)
-            this.snackBar.open('Error en la solicitud al servidor. Consulte con el administrador:' + errorMessage, 'Cerrar', {
-              duration: 4000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['error-snackbar']
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error en la solicitud al servidor. Consulte con el administrador: ' + errorMessage,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+              showClass: { popup: "animate_animated animatefadeIn animate_faster" },
             });
           }
         );
@@ -160,7 +166,6 @@ export class GestionIvaComponent implements OnInit {
     this.modoEdicion = true;
     this.ivaSeleccionado = iva;
     this.isModalVisible = true;
-    console.log('Selección: ' , this.ivaSeleccionado);
 
     this.ivaForm.patchValue({
       IdIva: iva.IdIva,

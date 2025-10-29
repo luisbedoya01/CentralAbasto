@@ -323,10 +323,6 @@ def getPrecioVentaViewGet(request):
         id_producto = request.GET.get('IdProducto', None)  # Ahora directamente un número
         transaccion = request.GET.get('Transaccion', None)
 
-        print("Recibiendo parámetros:")
-        print("IdProducto:", id_producto)
-        print("Transaccion:", transaccion)
-
         if not id_producto or not transaccion:
             return Response({"error": "Faltan parámetros en la solicitud."}, status=400)
 
@@ -343,7 +339,6 @@ def getPrecioVentaViewGet(request):
         # Llamada al procedimiento almacenado
         try:
             cur = connection.cursor()
-            print("Ejecutando el procedimiento almacenado con IdProducto:", id_producto, "y Transaccion:", transaccion)
 
             # Llamamos al procedimiento pasando el número directamente
             cur.callproc('GetPrecio', [id_producto, transaccion])
@@ -372,7 +367,6 @@ def getPrecioVentaViewGet(request):
                 return Response({"message": "No se encontraron productos para el IdProducto proporcionado."}, status=200)
 
         except Exception as e:
-            print("Error al ejecutar el procedimiento almacenado:", e)
             return Response({"error": "Error al ejecutar el procedimiento."}, status=500)
 
 
@@ -686,8 +680,6 @@ def getStockProductoViewGet(request, Id_Producto):
         cur.close()
 
         # Si se pidio un stock especifico, devolver solo ese stock en lugar de la lista
-        # if Id_Producto and listData:
-        #     return Response(listData[0])
         return Response(listData)
 
 @api_view(['POST'])
@@ -914,56 +906,6 @@ def getDetallePedidoViewGet(request):
     except Exception as e:
         return Response({"error": "Error al ejecutar el procedimiento."},e, status=500)
 
-    try:
-        transaccion = request.data.get('Transaccion','')
-        json_data = json.dumps(request.data)
-        
-        cur = connection.cursor()
-        
-        if transaccion == 'generar_factura':
-            cur.callproc(nameSP.agregarFactura,[json_data,transaccion])
-            
-            all_results = []
-            while True:
-                try:
-                    results = cur.fetchall()
-                    all_results.append(results)
-                    print(f"📋 Resultado del SP: {results}")
-                except:
-                    break
-                
-                if not cur.nextset():
-                    break
-            
-            cur.close()
-            
-            # Buscar el resultado que tenga IdFactura y CodigoFactura
-            id_factura = None
-            codigo_factura = None
-            
-            for result_set in all_results:
-                if result_set and len(result_set) > 0:
-                    # Buscar un resultado con 2 columnas (IdFactura, CodigoFactura)
-                    if len(result_set[0]) == 2:
-                        id_factura = result_set[0][0]
-                        codigo_factura = result_set[0][1]
-                        break
-            
-            if id_factura and codigo_factura:
-                return Response({
-                    "mensaje": "Factura creada correctamente",
-                    "IdFactura": id_factura,
-                    "CodigoFactura": codigo_factura 
-                }, status=200)
-            else:
-                # Si no encontramos el resultado esperado, mostrar todos los resultados para debug
-                print(f"🔍 Todos los resultados: {all_results}")
-                return Response({"mensaje": "Error al generar factura - no se obtuvieron los datos esperados"}, status=400)
-        else:
-            return Response({"mensaje":"Transaccion no válida"}, status=400)
-    except Exception as e:
-        print(f"❌ ERROR en agregarFacturaViewPost: {str(e)}")
-        return Response({"mensaje": str(e)}, status=400)
 @api_view(['POST'])
 def agregarFacturaViewPost(request, id=None):
     try:
@@ -991,7 +933,6 @@ def agregarFacturaViewPost(request, id=None):
         else:
             return Response({"mensaje":"Transaccion no válida"}, status=400)
     except Exception as e:
-        print(f"❌ ERROR en agregarFacturaViewPost: {str(e)}")
         return Response({"mensaje": str(e)}, status=400)
     
 @api_view(['POST'])

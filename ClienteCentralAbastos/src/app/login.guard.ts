@@ -18,8 +18,3 @@ export class LoginGuard implements CanActivate {
     return true;
   }
 }
-// import { CanActivateFn } from '@angular/router';
-
-// export const loginGuard: CanActivateFn = (route, state) => {
-//   return true;
-// };

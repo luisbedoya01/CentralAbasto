@@ -125,44 +125,87 @@ export class RegistroComponent implements OnInit {
 
     //console.log('Datos del usuario:', this.usuarioForm.value);
 
+
+
+    if (!this.validaCedula(this.cedulaUsuario)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Cédula Inválida',
+        text: 'La cédula ingresada no es válida. Por favor, verifique el número.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#d33',
+      });
+      return;
+    }
+
+
     if (this.usuarioForm.valid) {
       if (this.modoEdicion) {
         this.loginService.editarUsuario(this.usuarioSeleccionado.id, this.usuarioForm.value).subscribe(
           (data: any) => {
             this.respuesta = data;
-            //console.log(data);
             if (data.length === 0) {
-              console.error('Error: No se pudo editar el usuario');
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al editar el usuario',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
+              });
             } else {
-              console.log('Usuario editado correctamente:', data);
               this.obtenerUsuarios();
               this.cerrarModal();
+              Swal.fire({
+                title: '¡Usuario Editado!',
+                text: 'El usuario ha sido editado correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+              });
             }
             console.log('Respuesta de la API:', data);
           },
           (error: any) => {
-            //console.log(this.usuarioSeleccionado);
             console.error('Error al editar el usuario:', error);
           }
         );
-        console.log('Editando usuario:', this.usuarioForm.value);
       } else {
         console.log('Guardando nuevo usuario:', this.usuarioForm.value);
         this.loginService.registro(this.usuarioForm.value).subscribe(
           (data: any) => {
             this.respuesta = data;
-            //console.log(data);
             if (data.length === 0) {
-              console.error('Error: No se pudo registrar el usuario');
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo registrar el usuario',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
+              });
             } else {
-              console.log('Usuario registrado correctamente:', data);
               this.obtenerUsuarios();
               this.cerrarModal();
+              Swal.fire({
+                title: '¡Usuario Registrado!',
+                text: 'El usuario ha sido registrado correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+              });
+
             }
             console.log('Respuesta de la API:', data);
           },
           (error: any) => {
-            console.error('Error al registrar el usuario:', error);
+            const errorMessage = JSON.stringify(error, null, 2);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al registrar usuario ' + errorMessage,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+              showClass: { popup: "animate_animated animatefadeIn animate_faster" },
+            });
           }
         );
       }
@@ -172,7 +215,6 @@ export class RegistroComponent implements OnInit {
   editarUsuario(usuario: any) {
     this.modoEdicion = true;
     this.usuarioSeleccionado = usuario;
-    //console.log('Usuario seleccionado para editar:', this.usuarioSeleccionado);
     this.isModalVisible = true;
 
     this.usuarioForm.patchValue({
@@ -182,8 +224,36 @@ export class RegistroComponent implements OnInit {
       Apellidos: usuario.apellidos,
       IdRol: usuario.idrol,
     });
+  }
 
-    //console.log('Id del usuario seleccionado para editar:', this.usuarioSeleccionado.id);
+  private validaCedula(cedula: string): boolean {
+    cedula = cedula.replace(/[-\s]/g, '');
+
+    // Verificar que tenga 10 digitos
+    if (!/^[0-9]{10}$/.test(cedula)) {
+      return false;
+    }
+
+    // Verificar que los dos primeros digitos sean validos (provincia)
+    const provincia = parseInt(cedula.substring(0, 2));
+    if (provincia < 1 || provincia > 24) {
+      return false;
+    }
+
+    const digitos = cedula.split('').map(Number);
+
+    let suma = 0;
+    for (let i = 0; i < 9; i++) {
+      let multiplicacion = digitos[i] * (i % 2 === 0 ? 2 : 1);
+      if (multiplicacion > 9) {
+        multiplicacion -= 9;
+      }
+      suma += multiplicacion;
+    }
+
+    const digitoVerificadorCalculado = suma % 10 === 0 ? 0 : 10 - (suma % 10);
+
+    return digitoVerificadorCalculado === digitos[9];
   }
 
   actualizarClaveUsuario(usuario: any) {
@@ -231,9 +301,9 @@ export class RegistroComponent implements OnInit {
         IdUsuario: this.usuarioSeleccionado.id,
         Password: this.usuarioSeleccionado.cedula
       };
-      
+
       await firstValueFrom(this.loginService.cambiarClave(IdUsuario, usuario));
-      
+
       Swal.fire({
         icon: 'success',
         title: '¡Clave Cambiada!',
@@ -261,7 +331,6 @@ export class RegistroComponent implements OnInit {
       (data: any) => {
         if (Array.isArray(data)) {
           this.roles = data;
-          //console.log('Roles obtenidos:', this.roles);
         }
         else {
           console.error('Error: La respuesta no es un arreglo', data);
@@ -287,7 +356,29 @@ export class RegistroComponent implements OnInit {
 
   eliminarUsuario(usuario: any) {
     this.usuarioSeleccionado = usuario;
-    this.isConfirmDeleteModalVisible = true;
+    const nombreUsuario = this.usuarioSeleccionado.nombres + ' ' + this.usuarioSeleccionado.apellidos;
+    Swal.fire({
+      title: 'Confirmar eliminación',
+      html: `
+          <div class="text-start">
+              <p>¿Está seguro de eliminar al usuario?</p>
+          </div>
+          <div class="text-center">
+              <strong><p class="text-muted small">${nombreUsuario}</p></strong>
+          </div>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      cancelButtonText: 'No, cancelar',
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eliminarUsuarioConfirmado();
+      }
+    });
   }
 
   async eliminarUsuarioConfirmado(): Promise<void> {
@@ -299,35 +390,28 @@ export class RegistroComponent implements OnInit {
         if (data.length === 0) {
           console.error('Error: No se pudo eliminar el usuario');
           Swal.fire({
-            title: 
+            title: 'Error',
+            icon: 'error',
+            text: 'Error al eliminar usuario',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d33',
+            showClass: { popup: "animate_animated animatefadeIn animate_faster" },
           });
         } else {
-          console.log('Usuario eliminado correctamente:', data);
           this.obtenerUsuarios();
-          this.cerrarModalDelete();
+          Swal.fire({
+            title: 'Usuario eliminado',
+            text: 'El usuario ha sido eliminado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'rgba(38,218, 77,1)',
+            allowOutsideClick: false,
+            showClass: { popup: "animate_animated animatefadeIn animate_faster" },
+          });
         }
-        console.log('Respuesta de la API:', data);
       }
     );
   }
-
-  // eliminarUsuarioConfirmado() {
-  //   this.usuarioSeleccionado.Transaccion = 'eliminar_usuario';
-  //   this.usuarioSeleccionado.IdUsuario = this.usuarioSeleccionado.id;
-  //   this.loginService.eliminarUsuario(this.usuarioSeleccionado.IdUsuario, this.usuarioSeleccionado).subscribe(
-  //     (data: any) => {
-  //       this.respuesta = data;
-  //       if (data.length === 0) {
-  //         console.error('Error: No se pudo eliminar el usuario');
-  //       } else {
-  //         console.log('Usuario eliminado correctamente:', data);
-  //         this.obtenerUsuarios();
-  //         this.cerrarModalDelete();
-  //       }
-  //       console.log('Respuesta de la API:', data);
-  //     }
-  //   );
-  // }
 
   cerrarModalDelete() {
     this.isConfirmDeleteModalVisible = false;

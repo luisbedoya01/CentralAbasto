@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { UnidadMedidaService } from '../servicios/unidad-medida.service';
 import { UnidadService } from '../servicios/unidad.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-medidas-conversion',
@@ -86,8 +87,6 @@ export class MedidasConversionComponent implements OnInit {
     this.medidasConversion.getUnidadMedida('consulta_general').subscribe(
       (data: any) => {
         if (Array.isArray(data)) {
-          //console.log('Datos obtenidos:', data);
-          //console.log('Todo bien');
           this.medidas = data;
           this.medidasFiltradas = data;
           this.filtrarMedidas();
@@ -124,28 +123,27 @@ export class MedidasConversionComponent implements OnInit {
     this.factorConversion = this.medidaForm.value.Factor_Conversion;
     this.medidaForm.value.Transaccion = this.modoEdicion ? "editar_medida_conversion" : "agregar_medida_conversion";
 
-    //console.log('Datos a enviar:', this.medidaForm.value);
-
     if (this.medidaForm.valid) {
       if (this.modoEdicion) {
         // Si está en modo edición, llamamos al servicio de edición
-        //console.log('Editando medida de conversión:', this.medidaForm.value);
         this.medidasConversion.editarMedidaConversion(this.medidaSeleccionada.Id_Medida, this.medidaForm.value).subscribe(
           (data: any) => {
             this.respuesta = data;
             if (data.length === 0) {
-              this.snackBar.open('Error al editar la medida de conversión', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['error-snackbar']
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se editar la medida de conversión',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
               });
             } else {
-              this.snackBar.open('Medida de conversión editada correctamente', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['succes-snackbar']
+              Swal.fire({
+                title: '¡Medida Editada!',
+                text: 'Medida de conversión editada correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
               });
               this.obtenerMedidasConversion();
               this.cerrarModalAgregarMedida();
@@ -153,11 +151,14 @@ export class MedidasConversionComponent implements OnInit {
             console.log('Respuesta del servidor:', data);
           },
           (error) => {
-            this.snackBar.open('Error en la solicitud al servidor. Consulte con el administrador:' + error, 'Cerrar', {
-              duration: 4000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['error-snackbar']
+            const errorMessage = JSON.stringify(error, null, 2);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error en la solicitud al servidor: ' + errorMessage,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+              showClass: { popup: "animate_animated animatefadeIn animate_faster" },
             });
           }
         );
@@ -168,30 +169,34 @@ export class MedidasConversionComponent implements OnInit {
             this.respuesta = data;
             console.log(data);
             if (data.length === 0) {
-              this.snackBar.open('Error al agregar producto', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['succes-snackbar']
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo registrar la medida de conversión',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d33',
               });
             } else {
-              this.snackBar.open('Producto agregado correctamente', 'Cerrar', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['succes-snackbar']
+              Swal.fire({
+                title: '¡Medida de Conversión Registrada!',
+                text: 'La medida de conversión ha sido registrada correctamente',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
               });
               this.obtenerMedidasConversion();
               this.cerrarModalAgregarMedida();
             }
-            console.log('Respuesta del servidor:', data);
           },
           (error) => {
-            this.snackBar.open('Error en la solicitud al servidor. Consulte con el administrador:' + error, 'Cerrar', {
-              duration: 4000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['error-snackbar']
+            const errorMessage = JSON.stringify(error, null, 2);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al registrar medida de conversión ' + errorMessage,
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
+              showClass: { popup: "animate_animated animatefadeIn animate_faster" },
             });
           }
         );
@@ -273,18 +278,20 @@ export class MedidasConversionComponent implements OnInit {
       (data: any) => {
         this.respuesta = data;
         if (data.length === 0) {
-          this.snackBar.open('Error al eliminar la medida de conversión', 'Cerrar', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['error-snackbar']
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar la medida de conversión',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d33',
           });
         } else {
-          this.snackBar.open('Medida de conversión eliminada correctamente', 'Cerrar', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['succes-snackbar']
+          Swal.fire({
+            title: '¡Medida de Conversión Registrada!',
+            text: 'Medida de conversión eliminada correctamente',
+            icon: 'success',
+            timer: 1000,
+            showConfirmButton: false
           });
           this.obtenerMedidasConversion();
           this.cerrarModalEliminar();
@@ -313,30 +320,34 @@ export class MedidasConversionComponent implements OnInit {
           this.respuesta = data;
           console.log(data);
           if (data.length === 0) {
-            this.snackBar.open('Error al agregar unidad de medida', 'Cerrar', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['succes-snackbar']
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo registrar la medida de conversión',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#d33',
             });
           } else {
-            this.snackBar.open('Unidad de medida agregada correctamente', 'Cerrar', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-              panelClass: ['succes-snackbar']
+            Swal.fire({
+              title: '¡Medida de Conversión Registrada!',
+              text: 'La medida de conversión ha sido registrada correctamente',
+              icon: 'success',
+              timer: 1000,
+              showConfirmButton: false
             });
             this.obtenerUnidades();
             this.cerrarModalUnidadMedida();
           }
-          console.log('Respuesta de la API:', data);
         },
         (error) => {
-          this.snackBar.open('Error en la solicitud al servidor. Consulte con el administrador:' + error, 'Cerrar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['error-snackbar']
+          const errorMessage = JSON.stringify(error, null, 2);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al registrar medida de conversión ' + errorMessage,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d33',
+            showClass: { popup: "animate_animated animatefadeIn animate_faster" },
           });
         }
       );

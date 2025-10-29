@@ -286,8 +286,6 @@ export class CobrosComponent implements OnInit {
         )
       );
 
-      // console.log('Respuesta del servicio:', cliente);
-
       if (cliente && cliente.length > 0) {
         console.log('Cliente encontrado:', cliente[0]);
         this.cargarDatosCliente(cliente[0]);
@@ -305,9 +303,8 @@ export class CobrosComponent implements OnInit {
   }
 
   cargarDatosCliente(cliente: any): void {
-    //console.log('Cliente recibido:', cliente);
 
-    // GUARDAR LOS VALORES DE IDENTIFICACIÓN ANTES DE DESHABILITAR
+    // Guardar los valor de identificacion antes de deshabilitar
     this.idClienteGuardado = cliente.IdentificacionCliente;
     this.tipoIdClienteGuardado = cliente.CodTipoIdentificacion;
 
@@ -353,7 +350,6 @@ export class CobrosComponent implements OnInit {
     }
 
     const datosCliente = this.formCliente.getRawValue();
-    //console.log('📋 Datos COMPLETOS del formulario:', datosCliente);
 
     try {
       if (this.clienteEncontrado) {
@@ -382,7 +378,7 @@ export class CobrosComponent implements OnInit {
 
 
       } else {
-        // Para nuevo cliente (esto funciona bien según comentas)
+
         const datosNuevoCliente = {
           Transaccion: 'registrar_cliente',
           CodigoIdentificacion: datosCliente.IdCliente,
@@ -521,7 +517,6 @@ export class CobrosComponent implements OnInit {
       confirmButtonColor: 'rgba(38, 218, 77, 1)',
       confirmButtonText: 'Si, facturar pedido',
       cancelButtonText: 'No, cancelar',
-      //reverseButtons: true,
       allowOutsideClick: false,
       showLoaderOnConfirm: true,
       preConfirm: () => {
@@ -580,10 +575,6 @@ export class CobrosComponent implements OnInit {
 
         await firstValueFrom(this.pedidoService.editarPedido(this.pedidoSeleccionado.IdPedido, pedidoFacturar));
 
-        //console.log('Factura con datos',datosCliente);
-        // console.log('Factura con datos', datosFactura);
-        // console.log('Detalle de la Factura', this.detallePedido);
-
         const respuesta = await firstValueFrom(
           this.facturaService.agregarFactura(datosFactura) as Observable<RespuestFactura>);
 
@@ -595,8 +586,6 @@ export class CobrosComponent implements OnInit {
 
           this.cerrarModalFacturarPedido();
           this.obtenerPedidos();
-
-          console.log(`✅ Factura del Pedido - ${codigoFactura} confirmada exitosamente`);
         }
       } catch (error) {
         const errorMessage = JSON.stringify(error, null, 2);
@@ -639,14 +628,10 @@ export class CobrosComponent implements OnInit {
 
           console.log(`✅ Factura del Pedido - ${codigoFactura} confirmada exitosamente`);
         }
-
       } catch (error) {
         const errorMessage = JSON.stringify(error, null, 2);
         console.log('Error al agregar la factura', errorMessage);
       }
-
-      //console.log('Factura consumidor final', datosFactura);
-      //console.log('Detalles de la factura,', this.detallePedido);
     }
   }
 
@@ -685,8 +670,6 @@ export class CobrosComponent implements OnInit {
   cerrarModalGestionPedido() {
     this.isModalVisible = false;
   }
-
-
 
   cerrarModalFacturarPedido() {
     this.isModalFacturarVisible = false;

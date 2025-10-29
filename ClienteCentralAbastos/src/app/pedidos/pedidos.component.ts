@@ -330,7 +330,6 @@ export class PedidosComponent implements OnInit {
           this.pedidos = data;
           this.pedidosFiltrados = data;
           this.filtrarPedidos();
-          console.log('Pedidos obtenidos: ', this.pedidos);
         } else {
           console.log('Error en la respuesta del API no es un array', data);
         }
@@ -815,7 +814,6 @@ export class PedidosComponent implements OnInit {
 
       if (producto.IdUnidad_Conversion_Venta && producto.IdUnidad_Conversion_Venta > 0) {
         try {
-          //console.log('🔄 Consultando conversión de unidades...');
           const respuesta = await firstValueFrom(
             this.unidadMedidaService.getUnidadMedida(
               'obtener_medida_especifica',
@@ -946,15 +944,10 @@ export class PedidosComponent implements OnInit {
           Id_Producto: producto.Id_Producto,
           StockPedido: cantidadReservar
         };
-
-        // const resultado = await firstValueFrom(
-        //   this.productoService.editarProducto(producto.Id_Producto, productoActualizado)
-        // );
+        
         await firstValueFrom(
           this.productoService.editarProducto(producto.Id_Producto, productoActualizado)
         );
-
-        //console.log('✅ RESERVA EXITOSA en BD:', resultado);
 
         // 9. Actualizar stock en la lista local
         const productoEnLista = this.productos.find(p => p.Id_Producto === producto.Id_Producto);
@@ -981,7 +974,6 @@ export class PedidosComponent implements OnInit {
       // 10. Actualizar totales y limpiar formulario
       this.actualizarTotalesEdicion();
 
-      //console.log('🧹 Limpiando formulario...');
       producto.cantidadSeleccionada = undefined;
       producto.precioVentaSeleccionado = undefined;
       this.filtroProductoEdicion = '';
@@ -1340,9 +1332,6 @@ export class PedidosComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.pedidoService.getDetallePedido(IdPedido, 'consulta_detalle_pedido').subscribe(
         (data: any) => {
-          // console.log('Respuesta completa del servidor:', data);
-          // console.log('Primer elemento del detalle:', data[0]);
-
           if (Array.isArray(data)) {
             this.detallePedido = data;
             resolve();
@@ -1405,9 +1394,6 @@ export class PedidosComponent implements OnInit {
 
         return item;
       });
-
-      //console.log('✅ Productos cargados para edición:', this.productosEditados);
-
     } catch (error) {
       console.error('Error al abrir edición:', error);
       this.snackBar.open('Error al cargar el pedido para edición', 'Cerrar', {
@@ -1467,7 +1453,6 @@ export class PedidosComponent implements OnInit {
 
   async eliminarItemEdicion(index: number) {
     const item = this.productosEditados[index];
-    //console.log('Eliminando item de edición:', item);
 
     const result = await Swal.fire({
       title: '¿Estás seguro?',
@@ -1547,9 +1532,6 @@ export class PedidosComponent implements OnInit {
 
         //8. Actualizar el pedido
         await this.actualizarPedido();
-
-        //Cerrar loading y mostrar éxito
-        //Swal.close();
 
         //Cerrar el modal
         this.cerrarModalEdicion();
@@ -1750,7 +1732,6 @@ export class PedidosComponent implements OnInit {
   }
 
   private async actualizarStockProductosEdicion(): Promise<void> {
-    //console.log('🔄 Actualizando stock de productos nuevos');
 
     // Filtrar solo productos nuevos
     const productosNuevos = this.productosEditados.filter(item => item.esNuevo);
@@ -1775,9 +1756,6 @@ export class PedidosComponent implements OnInit {
           this.productoService.editarProducto(item.idProducto, datosActualizacion)
         );
       }
-
-      console.log(`✅ Stock actualizado para ${productosNuevos.length} productos`);
-
     } catch (error) {
       console.error('Error al actualizar stock:', error);
       throw new Error('No se pudo actualizar el stock de los productos');
@@ -1794,7 +1772,6 @@ export class PedidosComponent implements OnInit {
         Total: this.totalEdicion
       };
 
-      //console.log('Actualizando pedido con:', pedidoActualizar);
       await firstValueFrom(this.pedidoService.editarPedido(
         this.pedidoEditando.IdPedido,
         pedidoActualizar

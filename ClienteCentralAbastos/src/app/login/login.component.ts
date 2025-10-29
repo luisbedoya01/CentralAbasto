@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../servicios/auth.service';
 import { CommonModule } from '@angular/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -45,11 +45,10 @@ export class LoginComponent {
       this.loginService.login(this.usuarioLogin.value).subscribe(
         (data: any) => {
           this.authService.setUsuario(data);
-          //console.log('Data obtenida: ', data);
           if (data.primerLogin) {
             this.router.navigate(['/cambioClave']);
           } else {
-            this.router.navigate(['/principal']);  
+            this.router.navigate(['/principal']);
           }
         },
         (error) => {
@@ -62,7 +61,6 @@ export class LoginComponent {
               confirmButtonColor: '#d33',
             });
           } else {
-            // Para cualquier otro error (de red, del servidor, etc.)
             Swal.fire({
               icon: 'error',
               title: 'Error de conexión',

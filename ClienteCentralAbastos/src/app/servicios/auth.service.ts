@@ -39,20 +39,15 @@ export class AuthService {
   // Obtener usuario del localStorage
   private getUsuarioFromStorage(): any {
     if (isPlatformBrowser(this.platformId)) {
-      //const usuarioString = localStorage.getItem('authData');
       const usuarioString = sessionStorage.getItem('authData');
-
-      // console.log('AuthService: Leyendo de localStorage:', usuarioString);
 
       // Verificar que el string exista y no sea inválido
       if (usuarioString && usuarioString !== 'undefined' && usuarioString !== 'null') {
         try {
           const usuarioObjeto = JSON.parse(usuarioString);
-          //return JSON.parse(usuarioString);
           return usuarioObjeto;
         } catch (e) {
           console.error('Error al parsear authData desde localStorage', e);
-          //localStorage.removeItem('authData'); // Limpiar dato inválido
           sessionStorage.removeItem('authData'); // Limpiar dato inválido
           return null;
         }
@@ -65,7 +60,6 @@ export class AuthService {
   private isLoggedIn(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       // Comprueba que authData existe y no es vacio
-      //const authData = localStorage.getItem('authData');
       const authData = sessionStorage.getItem('authData');
       return !!authData && authData !== 'undefined' && authData !== 'null';
     }
@@ -86,8 +80,6 @@ export class AuthService {
 
     // Guardar en sessionStorage
     if (isPlatformBrowser(this.platformId)) {
-      //localStorage.setItem('authData', JSON.stringify(usuario));
-      //sessionStorage.setItem('authData', JSON.stringify(usuario));
       sessionStorage.setItem('authData', JSON.stringify(usuarioGuardar));
     }
     this.resetInactivityTimer();
@@ -117,7 +109,6 @@ export class AuthService {
           this.ngZone.run(() => {
             // Doble verificación antes de cerrar sesión
             if (this.isAuthenticated()) {
-              //this.logout();
               Swal.fire({
                 title: 'Sesión expirada',
                 text: 'Tu sesión ha sido cerrada por inactividad.',
@@ -150,7 +141,6 @@ export class AuthService {
   logout() {
     // Limpiar localStorage
     if (isPlatformBrowser(this.platformId)) {
-      //localStorage.removeItem('authData');
       sessionStorage.removeItem('authData');
     }
 

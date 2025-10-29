@@ -48,7 +48,6 @@ export class ReporteVentasComponent {
 
     this.reportesService.getReporteVentas(fechaInicio, fechaFin).subscribe({
       next: (data) => {
-        //console.log('Respuesta del API', data);
         if (data && data.length > 0) {
           this.chartData = data.map(item => ({
             name: new Date(item.Fecha.replace(/-/g, '/')),

@@ -135,7 +135,6 @@ export class GestionInventarioComponent implements OnInit {
     this.obtenerUnidades();
     this.obtenerProveedores();
     this.obtenerMedidasConversion();
-    //this.filtrarProductos();
   }
 
   //#region Inicializar los formularios
@@ -145,13 +144,11 @@ export class GestionInventarioComponent implements OnInit {
     CodigoProducto: new FormControl('', Validators.required),
     Nombre: new FormControl('', Validators.required),
     IdMarca: new FormControl('', Validators.required),
-    //IdUnidadMedida: new FormControl('', Validators.required),
     Stock: new FormControl('', Validators.required),
     StockMinimo: new FormControl('', Validators.required),
     StockMaximo: new FormControl('', Validators.required),
     PrecioCompra: new FormControl('', Validators.required),
     PorcentajeGanancia: new FormControl('', Validators.required),
-    //PrecioVenta: new FormControl('', Validators.required),
     IdProveedor: new FormControl('', Validators.required),
     FechaVencimiento: new FormControl(),
     VentaGranel: new FormControl(),
@@ -239,12 +236,10 @@ export class GestionInventarioComponent implements OnInit {
     this.modoEdicionPrecioVenta = false;
     this.precioSeleccionado = null;
     this.isModalAgregarPrecioVentaVisible = true;
-    //console.log('ID del producto:', this.productoForm.value.Id_Producto);
   }
 
   agregarStockProducto(producto: any) {
     this.productoSeleccionado = producto;
-    //console.log('Producto seleccionado para agregar stock:', this.productoSeleccionado);
     this.isModalVisibleStockProducto = true;
 
     this.stockProductoForm.patchValue({
@@ -354,8 +349,8 @@ export class GestionInventarioComponent implements OnInit {
       (data: any) => {
         if (Array.isArray(data)) {
           this.productos = data;
-          this.productosFiltrados = data; // Inicialmente, todos los productos están filtrados
-          this.filtrarProductos(); // Llamar a filtrarProductos para inicializar la lista filtrada
+          this.productosFiltrados = data;
+          this.filtrarProductos();
         } else {
           console.log('Error: la respuesta del servidor no es un arry', data);
         }
@@ -371,7 +366,6 @@ export class GestionInventarioComponent implements OnInit {
       (data: any) => {
         if (Array.isArray(data)) {
           this.categorias = data;
-          //console.log('Categorias:', this.categorias);
         }
         else {
           console.log('Error: la respuesta del servidor no es un array', data);
@@ -389,7 +383,6 @@ export class GestionInventarioComponent implements OnInit {
       (data: any) => {
         if (Array.isArray(data)) {
           this.estados = data;
-          //console.log('Estados:', this.categorias);
         }
         else {
           console.log('Error: la respuesta del servidor no es un array', data);
@@ -458,7 +451,6 @@ export class GestionInventarioComponent implements OnInit {
       (data: any) => {
         // Verificar si la respuesta tiene el mensaje indicando que no se encontraron precios
         if (data.mensaje) {
-          console.log(data.mensaje);  // "No se encontraron precios de venta"
           // No hay precios, la lista ya está vacía por defecto
         } else if (Array.isArray(data)) {
           this.preciosVentas = data;
@@ -482,11 +474,8 @@ export class GestionInventarioComponent implements OnInit {
       'consulta_stock_producto'
     ).subscribe(
       (data: any) => {
-        //console.log('Datos obtenidos:', data);
-
         if (Array.isArray(data)) {
           this.stockProductos = data;
-          //console.log('Stock de productos:', this.stockProductos);
         } else if (data) {
           // Si data existe pero no es array, intenta convertirlo o manejar el caso
           this.stockProductos = [data]; // Convierte a array si es un objeto único

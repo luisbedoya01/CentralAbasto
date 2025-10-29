@@ -34,7 +34,6 @@ urlpatterns = [
     path('api/v1/medidaconversion/', views.agregarMedidasConversionViewPost),
     path('api/v1/medidaconversion/<int:id>/', views.agregarMedidasConversionViewPost),
     path('api/v1/stockproductopost/<int:id>/', views.agregarStockProductoViewPost),
-    # path('api/v1/stockproductoget/<int:id>',views.getStockProductoViewGet),
     path('api/v1/stockproductoget/<int:Id_Producto>/',views.getStockProductoViewGet),
     path('api/v1/ivaget/<int:id>/',views.getIvaViewGet),
     path('api/v1/ivaget/',views.getIvaViewGet),
