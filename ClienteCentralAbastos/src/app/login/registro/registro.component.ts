@@ -188,17 +188,9 @@ export class RegistroComponent implements OnInit {
 
   actualizarClaveUsuario(usuario: any) {
     this.usuarioSeleccionado = usuario;
-    //console.log('Usuario seleccionado para el cambio de clave: ', this.usuarioSeleccionado);
     const nombreUsuario = this.usuarioSeleccionado.nombres + ' ' + this.usuarioSeleccionado.apellidos;
-    //console.log('Info ', nombreUsuario);
     Swal.fire({
       title: 'Confirmar cambio',
-      // html: `
-      //       <div class="text-start">
-      //           <p>¿Está seguro de cambiar la clave del usuario?</p>
-      //           <p class="text-muted small"> ${nombreUsuario}</p>
-      //       </div>
-      //   `,
       html: `
           <div class="text-start">
               <p>¿Está seguro de cambiar la clave del usuario?</p>
@@ -214,7 +206,7 @@ export class RegistroComponent implements OnInit {
       cancelButtonColor: '#6c757d',
       cancelButtonText: 'No, cancelar',
       allowOutsideClick: false
-    }).then((result)=>{
+    }).then((result) => {
       if (result.isConfirmed) {
         this.procesarCambioClave();
       }
@@ -222,14 +214,26 @@ export class RegistroComponent implements OnInit {
   }
 
   async procesarCambioClave(): Promise<void> {
+    Swal.fire({
+      title: 'Actualizando...',
+      text: 'Por favor, espere un momento.',
+      icon: 'info',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     try {
       const IdUsuario = this.usuarioSeleccionado.id;
       const usuario = {
         Transaccion: 'cambiar_clave',
         IdUsuario: this.usuarioSeleccionado.id,
-        Password: this.usuarioSeleccionado.id
+        Password: this.usuarioSeleccionado.cedula
       };
+      
       await firstValueFrom(this.loginService.cambiarClave(IdUsuario, usuario));
+      
       Swal.fire({
         icon: 'success',
         title: '¡Clave Cambiada!',
@@ -286,7 +290,7 @@ export class RegistroComponent implements OnInit {
     this.isConfirmDeleteModalVisible = true;
   }
 
-  eliminarUsuarioConfirmado() {
+  async eliminarUsuarioConfirmado(): Promise<void> {
     this.usuarioSeleccionado.Transaccion = 'eliminar_usuario';
     this.usuarioSeleccionado.IdUsuario = this.usuarioSeleccionado.id;
     this.loginService.eliminarUsuario(this.usuarioSeleccionado.IdUsuario, this.usuarioSeleccionado).subscribe(
@@ -294,6 +298,9 @@ export class RegistroComponent implements OnInit {
         this.respuesta = data;
         if (data.length === 0) {
           console.error('Error: No se pudo eliminar el usuario');
+          Swal.fire({
+            title: 
+          });
         } else {
           console.log('Usuario eliminado correctamente:', data);
           this.obtenerUsuarios();
@@ -303,6 +310,24 @@ export class RegistroComponent implements OnInit {
       }
     );
   }
+
+  // eliminarUsuarioConfirmado() {
+  //   this.usuarioSeleccionado.Transaccion = 'eliminar_usuario';
+  //   this.usuarioSeleccionado.IdUsuario = this.usuarioSeleccionado.id;
+  //   this.loginService.eliminarUsuario(this.usuarioSeleccionado.IdUsuario, this.usuarioSeleccionado).subscribe(
+  //     (data: any) => {
+  //       this.respuesta = data;
+  //       if (data.length === 0) {
+  //         console.error('Error: No se pudo eliminar el usuario');
+  //       } else {
+  //         console.log('Usuario eliminado correctamente:', data);
+  //         this.obtenerUsuarios();
+  //         this.cerrarModalDelete();
+  //       }
+  //       console.log('Respuesta de la API:', data);
+  //     }
+  //   );
+  // }
 
   cerrarModalDelete() {
     this.isConfirmDeleteModalVisible = false;
