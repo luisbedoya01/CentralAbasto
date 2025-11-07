@@ -1,23 +1,22 @@
 <mat-sidenav-container class="sidenav-container">
 
-  <mat-sidenav #sidenav class="sidenav" [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    (opened)="log('EVENTO: Sidenav se ha abierto')" (closed)="log('EVENTO: Sidenav se ha cerrado')">
+  <mat-sidenav #sidenav class="sidenav" [mode]="(isHandset$ | async) ? 'over' : 'side'">
 
     <div class="sidenav-content">
       <mat-toolbar>Menú</mat-toolbar>
 
       <mat-nav-list class="nav-list">
         <a mat-list-item routerLink="/principal"
-          (click)="sidenav.close(); log('ACCIÓN: Clic en Inicio, ordenando cerrar')"><mat-icon>home</mat-icon>
+          (click)="sidenav.close()"><mat-icon>home</mat-icon>
           Inicio</a>
         <a mat-list-item routerLink="/pedidos"
-          (click)="sidenav.close(); log('ACCIÓN: Clic en Pedidos, ordenando cerrar')"><mat-icon>store</mat-icon>
+          (click)="sidenav.close()"><mat-icon>store</mat-icon>
           Pedidos</a>
         <a mat-list-item routerLink="/cobros"
-          (click)="sidenav.close(); log('ACCIÓN: Clic en Facturar, ordenando cerrar')"><mat-icon>receipt_long</mat-icon>
+          (click)="sidenav.close()"><mat-icon>receipt_long</mat-icon>
           Facturar</a>
         <a mat-list-item routerLink="/inventario"
-          (click)="sidenav.close(); log('ACCIÓN: Clic en Inventario, ordenando cerrar')"><mat-icon>warehouse</mat-icon>
+          (click)="sidenav.close()"><mat-icon>warehouse</mat-icon>
           Inventario</a>
 
         <mat-list-item (click)="toggleSubMenu()"><mat-icon>settings</mat-icon> Configuración</mat-list-item>
@@ -47,5 +46,4 @@
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
-
 </mat-sidenav-container>
