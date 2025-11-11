@@ -1,4 +1,3 @@
-// En src/app/login.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { AuthService } from './servicios/auth.service';
