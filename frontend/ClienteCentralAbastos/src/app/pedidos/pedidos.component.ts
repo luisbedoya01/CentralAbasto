@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ProductoService } from '../servicios/producto.service';
 import { PrecioVentaService } from '../servicios/precio-venta.service';
 import { UnidadMedidaService } from '../servicios/unidad-medida.service';
-import { catchError, forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PedidoService } from '../servicios/pedido.service';
@@ -233,6 +233,26 @@ export class PedidosComponent implements OnInit {
   //#endregion
 
   //#region Métodos para obtener datos
+  // Método anterior con codigo deprecado
+  /*obtenerProductos() {
+    this.cargando = true;
+    this.productoService.getProducto('obtener_productos').subscribe(
+      (data: any) => {
+        if (Array.isArray(data)) {
+          this.productos = data;
+          this.obtenerPreciosVenta();
+        } else {
+          console.error('Error: La respuesta del servidor no es un array', data);
+        }
+        this.cargando = false;
+      },
+      (error) => {
+        console.error('Error al obtener productos:', error);
+        this.cargando = false;
+      }
+    );
+  }*/
+
   obtenerProductos() {
     this.cargando = true;
     this.productoService.getProducto('obtener_productos').subscribe({
@@ -241,7 +261,7 @@ export class PedidosComponent implements OnInit {
           this.productos = data;
           this.obtenerPreciosVenta();
         } else {
-          console.error('Error: La respuesta del servidor no es un array', data);
+          console.error('Error: La respuesta del servidor no es un array',data);
         }
         this.cargando = false;
       },
@@ -253,25 +273,21 @@ export class PedidosComponent implements OnInit {
   }
 
   obtenerPreciosVenta() {
-    this.precioVenta = {};
     const solicitudes = this.productos.map(producto =>
       this.precioVentaService.getPrecioVenta(
         producto.Id_Producto,
         'consulta_precio_venta'
-      ).pipe(
-        catchError(error => {
-          console.error(`Error al obtener precio para el producto ${producto.Id_Producto}:`, error);
-          return of([]);
-        })
       )
     );
 
-    forkJoin(solicitudes).subscribe({
-      next: (resultados: any[]) => {
+    forkJoin(solicitudes).subscribe(
+      (resultados: any[]) => {
         resultados.forEach((data, index) => {
           const producto = this.productos[index];
 
-          if (Array.isArray(data) && data.length > 0) {
+          if (data.mensaje || !Array.isArray(data)) {
+            this.precioVenta[producto.Id_Producto] = [];
+          } else {
             this.precioVenta[producto.Id_Producto] = data.map((precio: any) => ({
               IdPrecio: precio.IdPrecio,
               Id_Producto: precio.Id_Producto,
@@ -280,15 +296,13 @@ export class PedidosComponent implements OnInit {
               UnidadMedida: precio.UnidadMedida || 'Sin unidad',
               Estado: precio.Estado
             }));
-          } else {
-            this.precioVenta[producto.Id_Producto] = [];
           }
         });
       },
-      error: (error) => {
-        console.error('Error al obtener los precios: ', error)
+      (error) => {
+        console.error('Error al obtener precios:', error);
       }
-    });
+    );
   }
 
   filtrarPedidos() {
@@ -329,40 +343,22 @@ export class PedidosComponent implements OnInit {
     }
   }
 
-  // obtenerPedidos() {
-  //   this.pedidoService.getPedido('consultar_pedidos_pendientes').subscribe(
-  //     (data: any) => {
-  //       if (Array.isArray(data)) {
-  //         this.pedidos = data;
-  //         this.pedidosFiltrados = data;
-  //         this.filtrarPedidos();
-  //       } else {
-  //         console.log('Error en la respuesta del API no es un array', data);
-  //       }
-  //     },
-  //     (error: any) => {
-  //       const errorMessage = JSON.stringify(error, null, 2);
-  //       console.log('Error al obtener los pedidos', errorMessage);
-  //     }
-  //   );
-  // }
-
   obtenerPedidos() {
-    this.pedidoService.getPedido('consultar_pedidos_pendientes').subscribe({
-      next: (data: any) => {
+    this.pedidoService.getPedido('consultar_pedidos_pendientes').subscribe(
+      (data: any) => {
         if (Array.isArray(data)) {
           this.pedidos = data;
           this.pedidosFiltrados = data;
           this.filtrarPedidos();
         } else {
-          console.error('Error en la respuesta del API no es un array', data);
+          console.log('Error en la respuesta del API no es un array', data);
         }
       },
-      error: (error) => {
+      (error: any) => {
         const errorMessage = JSON.stringify(error, null, 2);
-        console.error('Error al obtener los pedidos', errorMessage)
+        console.log('Error al obtener los pedidos', errorMessage);
       }
-    });
+    );
   }
 
   obtenerDetallePedido() {
@@ -968,7 +964,7 @@ export class PedidosComponent implements OnInit {
           Id_Producto: producto.Id_Producto,
           StockPedido: cantidadReservar
         };
-
+        
         await firstValueFrom(
           this.productoService.editarProducto(producto.Id_Producto, productoActualizado)
         );
