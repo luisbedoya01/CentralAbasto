@@ -9,7 +9,8 @@ import { UsuarioInterface } from '../interfaces/UsuarioInterface';
 
 export class LoginService {
 
-  baseUrl: string = 'http://127.0.0.1:8000/centralAbasto/api/v1/';
+  // baseUrl: string = 'http://127.0.0.1:8000/centralAbasto/api/v1/'; // Desarrollo
+  baseUrl = 'https://centralabastoapi.onrender.com/centralAbasto/api/v1/'; // Produccion
   
   constructor(private http: HttpClient) { }
 
