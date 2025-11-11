@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url # Para conectar BD
+import json # Para leer la lista de CORS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)igdp4_$7=n3^ijf0offh-uaq#ux&akzos2-ifzjmo$q2jax0)'
+# Desarrollo
+# SECRET_KEY = 'django-insecure-)igdp4_$7=n3^ijf0offh-uaq#ux&akzos2-ifzjmo$q2jax0)'
+
+# Produccion 
+SECRET_KEY = os.environ.get('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
@@ -88,15 +94,23 @@ WSGI_APPLICATION = 'CentralAbastos.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Desarrollo
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'abastodb',
+#         'USER': 'root',
+#         'PASSWORD': 'lz450wb1',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
+# Produccion
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'abastodb',
-        'USER': 'root',
-        'PASSWORD': 'lz450wb1',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
@@ -142,4 +156,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Cors for external connections
-CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
+# Desarrollo
+# CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
+
+CORS_ALLOWED_ORIGINS_JSON = os.environ.get('CORS_ALLOWED_ORIGINS')
+if CORS_ALLOWED_ORIGINS_JSON:
+    CORS_ALLOWED_ORIGINS = json.loads(CORS_ALLOWED_ORIGINS_JSON)
+else:
+    CORS_ALLOWED_ORIGINS = [] # Por defecto, no permite a nadie
